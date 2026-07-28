@@ -15,7 +15,7 @@
             --primary: #3b82f6;
             --video-color: #ef4444; 
             --anime-color: #ec4899; 
-            --vip-color: #f59e0b; /* Vàng VIP */
+            --vip-color: #f59e0b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -92,6 +92,7 @@
         .search-box input:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
         .search-box::before { content: '🔍'; position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 14px; }
 
+        /* Nút Xem Hướng Dẫn */
         .tutorial-box {
             background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6;
             padding: 20px; border-radius: 12px; margin-bottom: 25px;
@@ -99,6 +100,11 @@
         }
         .tutorial-box h3 { color: #60a5fa; font-size: 18px; display: flex; align-items: center; gap: 8px; margin-bottom: 5px;}
         .tutorial-box p { color: var(--text-sub); font-size: 14px; line-height: 1.5; }
+        .tutorial-btn {
+            display: inline-block; padding: 10px 20px; background: #3b82f6; margin-top: 5px;
+            color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: 0.3s;
+        }
+        .tutorial-btn:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4); }
         
         /* Popup Modal Đăng Nhập */
         .modal-overlay {
@@ -220,11 +226,10 @@
         <div class="menu-list">
             <div class="menu-item video active" onclick="changeTab('Video', 'video', this)">🎬 Video</div>
             <div class="menu-item anime" onclick="changeTab('Anime', 'anime', this)">🌸 Anime</div>
-            <div class="menu-item vip" onclick="changeTab('Shop Acc VIP', 'vip', this)">🛒 Shop Acc VIP</div>
+            <div class="menu-item vip" onclick="changeTab('ACC VIP', 'vip', this)">🛒 ACC VIP</div>
         </div>
 
         <div class="socials">
-            <!-- Đổi # thành link nhóm bạn -->
             <a href="#" target="_blank" class="soc-btn tele">✈️ Tham gia Telegram</a>
             <a href="#" target="_blank" class="soc-btn disc">👾 Tham gia Discord</a>
         </div>
@@ -239,10 +244,13 @@
             </div>
         </div>
 
+        <!-- Ô HƯỚNG DẪN DÙNG CHUNG (Thay đổi nội dung theo Tab) -->
         <div class="tutorial-box" id="tutBox">
+            <!-- Nội dung mặc định cho Video/Anime -->
             <h3>📖 Hướng Dẫn Vượt Link Tải Phim</h3>
             <p>Anh em nào chưa biết cách vượt link tải thì xem video nhé. <br>
             <b style="color:#f59e0b">ĐẶC BIỆT:</b> Hãy Đăng Ký và Đăng Nhập tài khoản để trở thành VIP, nhấp thẳng vào link gốc không cần xem quảng cáo!</p>
+            <a href="LINK_VIDEO_HUONG_DAN_VUOT_LINK_THAY_VAO_DAY" target="_blank" class="tutorial-btn">▶️ Xem Video Hướng Dẫn</a>
         </div>
 
         <div id="contentArea">
@@ -311,7 +319,7 @@
             if (currentUser) return; // VIP thì thoát không bật Tiktok
             
             if (!globalAdClicked) {
-                if(e.target.tagName !== "INPUT" && !e.target.closest('.modal-content')) {
+                if(e.target.tagName !== "INPUT" && !e.target.closest('.modal-content') && !e.target.closest('.tutorial-btn')) {
                     globalAdClicked = true;
                     window.open('https://vt.tiktok.com/ZS9r1CqQQvChC-p0Ysb/', '_blank');
                 }
@@ -386,12 +394,26 @@
             
             let titlePrefix = "🎬";
             if(category === "Anime") titlePrefix = "🌸";
-            if(category === "Shop Acc VIP") titlePrefix = "🛒";
+            if(category === "ACC VIP") titlePrefix = "🛒";
             
             document.getElementById('categoryTitle').innerText = `${titlePrefix} ${category}`;
 
-            if(category === "Shop Acc VIP") document.getElementById('tutBox').style.display = 'none';
-            else document.getElementById('tutBox').style.display = 'flex';
+            // Cập nhật Box Hướng Dẫn tùy theo Tab
+            const tutBox = document.getElementById('tutBox');
+            if(category === "ACC VIP") {
+                tutBox.innerHTML = `
+                    <h3>📖 Hướng Dẫn Mua & Đăng Nhập Acc VIP</h3>
+                    <p>Anh em chưa biết cách giao dịch mua Acc hoặc cách đăng nhập sử dụng thì xem ngay video này nhé!</p>
+                    <a href="LINK_VIDEO_HUONG_DAN_MUA_ACC_THAY_VAO_DAY" target="_blank" class="tutorial-btn">▶️ Xem Video Hướng Dẫn</a>
+                `;
+            } else {
+                tutBox.innerHTML = `
+                    <h3>📖 Hướng Dẫn Vượt Link Tải Phim</h3>
+                    <p>Anh em nào chưa biết cách vượt link tải thì xem video nhé. <br>
+                    <b style="color:#f59e0b">ĐẶC BIỆT:</b> Hãy Đăng Ký và Đăng Nhập tài khoản để trở thành VIP, nhấp thẳng vào link gốc không cần xem quảng cáo!</p>
+                    <a href="LINK_VIDEO_HUONG_DAN_VUOT_LINK_THAY_VAO_DAY" target="_blank" class="tutorial-btn">▶️ Xem Video Hướng Dẫn</a>
+                `;
+            }
 
             document.getElementById('searchInput').value = '';
             renderContent(category);
@@ -429,9 +451,9 @@
                 }
 
                 const safeTitle = item.title.replace(/'/g, "\\'");
-                const clickText = item.clicks > 0 ? `🔥 ${item.clicks} ${category === 'Shop Acc VIP' ? 'Lượt xem' : 'Lượt tải'}` : `🔥 Mới nhất`;
+                const clickText = item.clicks > 0 ? `🔥 ${item.clicks} ${category === 'ACC VIP' ? 'Lượt xem' : 'Lượt tải'}` : `🔥 Mới nhất`;
                 
-                const btnStyleClass = category === 'Shop Acc VIP' ? 'download-btn btn-vip' : 'download-btn btn-1';
+                const btnStyleClass = category === 'ACC VIP' ? 'download-btn btn-vip' : 'download-btn btn-1';
 
                 html += `
                 <div class="card">
@@ -456,4 +478,3 @@
     </script>
 </body>
 </html>
-
