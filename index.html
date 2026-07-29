@@ -56,16 +56,27 @@
         .tut-box { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 25px; color: var(--text-main); }
         .tut-box h3 { color: var(--primary); margin-bottom: 8px; }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; align-items: start; }
+        
         .card { background: var(--bg-card); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
-        .media { position: relative; padding-bottom: 56.25%; background: #000; }
-        .media iframe, .media img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Xử lý ảnh dọc & video chuẩn không bị mất mặt */
+        .media { width: 100%; background: #000; display: block; }
+        .media iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
+        .media img { 
+            width: 100%; 
+            height: auto; 
+            max-height: 480px; 
+            object-fit: cover; 
+            object-position: top center; /* Luôn giữ lại phần đầu/mặt của nhân vật */
+            display: block; 
+        }
+
         .card-content { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
         .card h3 { font-size: 18px; margin-bottom: 10px; color: var(--text-main); }
         .btn-group { display: flex; gap: 10px; margin-top: auto; }
         .btn-main { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; background: var(--primary); color: white; text-align: center; }
         .btn-main.vip-btn { background: var(--vip); color: black; }
-        .btn-report { background: #3f3f46; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; }
         .modal-content { background: var(--bg-card); width: 400px; padding: 30px; border-radius: 16px; text-align: center; position: relative; border: 1px solid var(--border); color: var(--text-main); }
@@ -79,7 +90,7 @@
             .menu-toggle { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
             .sidebar { left: -100%; box-shadow: 5px 0 20px rgba(0,0,0,0.8); transition: left 0.3s ease; }
             .sidebar.show { left: 0; }
-            .close-menu-btn { display: block; } /* Hiện nút đóng menu trên mobile */
+            .close-menu-btn { display: block; }
             .main-content { margin-left: 0; width: 100%; padding: 15px; }
         }
     </style>
@@ -91,7 +102,7 @@
         <div class="logo" style="margin:0; font-size:22px;">🎬 <span>PHIM HAY</span></div>
     </div>
 
-    <!-- Modal Đăng Nhập -->
+    <!-- Modal Đăng Nhập & Kích Hoạt -->
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <button class="close" onclick="closeModal('loginModal')">✖</button>
@@ -114,7 +125,7 @@
         <div class="menu-item" onclick="changeTab('Anime', this)">🌸 Hoạt Hình Anime</div>
         <div class="menu-item" onclick="changeTab('ACC VIP', this)">🛒 ACC VIP</div>
         
-        <!-- Nút tắt menu dành riêng cho mobile -->
+        <!-- Nút đóng menu trên mobile -->
         <button class="close-menu-btn" onclick="toggleMenu()">✖ Đóng Menu</button>
     </div>
 
@@ -128,6 +139,7 @@
     </div>
 
     <script>
+        // LINK API GOOGLE APPS SCRIPT CỦA BẠN
         const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec"; 
         
         let allData = [];
@@ -164,7 +176,7 @@
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
-        // Tự động khôi phục theme đã lưu khi tải trang
+        // Tự động khôi phục theme khi tải trang
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
@@ -235,6 +247,7 @@
         function handleCustomClick(event, lThuong, lVip, title, category) {
             event.preventDefault();
             
+            // XỬ LÝ MUA ACC TỰ ĐỘNG DỰA VÀO TIÊU ĐỀ
             if (category === 'ACC VIP') {
                 let days = 1; 
                 let t = title.toLowerCase();
@@ -290,7 +303,7 @@
             document.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
             if(el) el.classList.add('active');
             
-            // Tự đóng menu trên mobile khi người dùng chọn xong 1 tab
+            // Tự đóng menu trên mobile khi click chọn tab
             if(window.innerWidth <= 768) {
                 document.getElementById('sidebarMenu').classList.remove('show');
             }
@@ -314,7 +327,7 @@
         function renderList(items) {
             let html = '';
             items.forEach(i => {
-                let media = i.video && i.video.includes('embed') ? `<iframe src="${i.video}"></iframe>` : `<img src="${i.image || 'https://via.placeholder.com/300x170?text=NO+IMAGE'}">`;
+                let media = i.video && i.video.includes('embed') ? `<iframe src="${i.video}"></iframe>` : `<img src="${i.image || 'https://via.placeholder.com/300x400?text=NO+IMAGE'}">`;
                 let sTitle = i.title.replace(/'/g, "\\'");
                 let btnCls = currentTab === 'ACC VIP' ? 'btn-main vip-btn' : 'btn-main';
                 
