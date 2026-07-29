@@ -45,7 +45,6 @@
         .menu-item { padding: 14px 20px; margin-bottom: 10px; border-radius: 12px; display: flex; gap: 15px; color: var(--text-sub); cursor: pointer; font-weight: 600; }
         .menu-item.active { background: rgba(59, 130, 246, 0.15); color: var(--primary); border-left: 4px solid var(--primary); }
         
-        /* Nút đóng menu trên mobile */
         .close-menu-btn { display: none; background: #ef4444; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; margin-top: auto; cursor: pointer; text-align: center; }
 
         .main-content { margin-left: 280px; width: calc(100% - 280px); padding: 30px 40px; }
@@ -60,7 +59,6 @@
         
         .card { background: var(--bg-card); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
         
-        /* Xử lý ảnh dọc & video chuẩn không bị mất mặt */
         .media { width: 100%; background: #000; display: block; }
         .media iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
         .media img { 
@@ -68,7 +66,7 @@
             height: auto; 
             max-height: 480px; 
             object-fit: cover; 
-            object-position: top center; /* Luôn giữ lại phần đầu/mặt của nhân vật */
+            object-position: top center; 
             display: block; 
         }
 
@@ -79,7 +77,7 @@
         .btn-main.vip-btn { background: var(--vip); color: black; }
         
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; }
-        .modal-content { background: var(--bg-card); width: 400px; padding: 30px; border-radius: 16px; text-align: center; position: relative; border: 1px solid var(--border); color: var(--text-main); }
+        .modal-content { background: var(--bg-card); width: 420px; padding: 30px; border-radius: 16px; text-align: center; position: relative; border: 1px solid var(--border); color: var(--text-main); }
         .close { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; background: none; border: none; color: var(--text-main); }
         .input-box { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; background: var(--bg-main); border: 1px solid var(--border); color: var(--text-main); }
         
@@ -114,6 +112,21 @@
         </div>
     </div>
 
+    <!-- Modal Đếm Ngược Vượt Link Quảng Cáo -->
+    <div class="modal" id="adModal">
+        <div class="modal-content">
+            <h3 style="color: var(--vip); margin-bottom: 15px;">⏳ Xác Thực Xem Quảng Cáo</h3>
+            <p id="adStatusText" style="margin-bottom: 15px; font-size: 14px; line-height: 1.5;">
+                Hệ thống đã mở trang quảng cáo. Vui lòng ở lại trang đó trong vòng <b id="countdownNum" style="font-size:18px; color:var(--primary)">40</b> giây để hoàn thành.
+            </p>
+            <div id="adWarningBox" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; display: none; line-height: 1.4;">
+                ⚠️ Bạn đã quay lại quá sớm! Đồng hồ đã tạm dừng. Vui lòng bấm nút bên dưới để quay lại trang quảng cáo.
+            </div>
+            <button id="adActionBtn" class="btn-main" onclick="reopenAdTab()" style="margin-bottom: 10px; display: none;">🚀 Quay Lại Trang Quảng Cáo</button>
+            <button id="adDoneBtn" class="btn-main vip-btn" style="display: none;" onclick="finishAd()">✅ ĐÃ XONG - XEM PHIM NGAY</button>
+        </div>
+    </div>
+
     <div class="sidebar" id="sidebarMenu">
         <div class="logo">🎬 <span>PHIM HAY</span></div>
         <div class="user-panel">
@@ -125,7 +138,6 @@
         <div class="menu-item" onclick="changeTab('Anime', this)">🌸 Hoạt Hình Anime</div>
         <div class="menu-item" onclick="changeTab('ACC VIP', this)">🛒 ACC VIP</div>
         
-        <!-- Nút đóng menu trên mobile -->
         <button class="close-menu-btn" onclick="toggleMenu()">✖ Đóng Menu</button>
     </div>
 
@@ -139,7 +151,6 @@
     </div>
 
     <script>
-        // LINK API GOOGLE APPS SCRIPT CỦA BẠN
         const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec"; 
         
         let allData = [];
@@ -165,7 +176,6 @@
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         
-        // --- ☀️ TÍNH NĂNG CHUYỂN SÁNG / TỐI ---
         function toggleTheme() {
             const body = document.body;
             body.classList.toggle('light-mode');
@@ -176,7 +186,6 @@
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
-        // Tự động khôi phục theme khi tải trang
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
@@ -185,28 +194,118 @@
             }
         });
 
-        // --- BẬT / TẮT MENU MOBILE ---
         function toggleMenu() { 
             document.getElementById('sidebarMenu').classList.toggle('show'); 
         }
 
-        // --- QUẢNG CÁO XOAY VÒNG ---
+        // --- HỆ THỐNG VƯỢT LINK QUẢNG CÁO 40S (NGẪU NHIÊN 2 LINK) ---
         const adLinks = [
-            "https://link_quang_cao_1.com",
-            "https://link_quang_cao_2.com",
-            "https://link_quang_cao_3.com"
+            "https://vt.tiktok.com/ZS9h1V6gaHtvv-SyyMO/",
+            "https://vt.tiktok.com/ZS9h1qSqLxnTQ-4Z9S1/"
         ];
-        let adIndex = 0;
-        let adClicked = false;
-        
-        document.addEventListener('click', function(e) {
-            if (cUser && isVip) return; 
-            if (!adClicked && !e.target.closest('.modal') && !e.target.closest('.mobile-header') && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.closest('.theme-toggle')) {
-                adClicked = true; 
-                window.open(adLinks[adIndex], '_blank');
-                adIndex = (adIndex + 1) % adLinks.length;
+
+        let currentPendingLink = "";
+        let adTargetDuration = 40000; // 40 giây
+        let accumulatedAwayTime = 0;
+        let lastLeftTime = null;
+        let adCheckInterval = null;
+        let activeAdUrl = "";
+
+        function triggerAdFlow(targetLink) {
+            currentPendingLink = targetLink;
+            
+            // Chọn ngẫu nhiên 1 trong 2 link TikTok
+            activeAdUrl = adLinks[Math.floor(Math.random() * adLinks.length)];
+            
+            // Mở tab quảng cáo
+            window.open(activeAdUrl, '_blank');
+
+            // Khởi tạo thời gian đếm
+            accumulatedAwayTime = 0;
+            lastLeftTime = Date.now(); 
+            
+            openModal('adModal');
+            document.getElementById('adWarningBox').style.display = 'none';
+            document.getElementById('adActionBtn').style.display = 'none';
+            document.getElementById('adDoneBtn').style.display = 'none';
+            document.getElementById('adStatusText').style.display = 'block';
+
+            if(adCheckInterval) clearInterval(adCheckInterval);
+            adCheckInterval = setInterval(updateAdProgress, 500);
+        }
+
+        function reopenAdTab() {
+            window.open(activeAdUrl, '_blank');
+            lastLeftTime = Date.now();
+            document.getElementById('adWarningBox').style.display = 'none';
+            document.getElementById('adActionBtn').style.display = 'none';
+            document.getElementById('adStatusText').style.display = 'block';
+        }
+
+        function updateAdProgress() {
+            let modal = document.getElementById('adModal');
+            if (modal.style.display !== 'flex') {
+                clearInterval(adCheckInterval);
+                return;
+            }
+
+            let now = Date.now();
+            let totalAway = accumulatedAwayTime;
+            if (document.hidden === true && lastLeftTime !== null) {
+                totalAway += (now - lastLeftTime);
+            }
+
+            let remainingMs = adTargetDuration - totalAway;
+            let remainingSec = Math.ceil(remainingMs / 1000);
+            if (remainingSec < 0) remainingSec = 0;
+
+            if (remainingSec > 0) {
+                document.getElementById('countdownNum').innerText = remainingSec;
+            } else {
+                clearInterval(adCheckInterval);
+                document.getElementById('adStatusText').style.display = 'none';
+                document.getElementById('adWarningBox').style.display = 'none';
+                document.getElementById('adActionBtn').style.display = 'none';
+                document.getElementById('adDoneBtn').style.display = 'block';
+            }
+        }
+
+        // Bắt sự kiện người dùng chuyển qua lại giữa các tab
+        document.addEventListener('visibilitychange', function() {
+            let modal = document.getElementById('adModal');
+            if (modal.style.display !== 'flex') return;
+
+            if (document.hidden) {
+                // Người dùng sang tab quảng cáo
+                lastLeftTime = Date.now();
+                document.getElementById('adWarningBox').style.display = 'none';
+                document.getElementById('adActionBtn').style.display = 'none';
+            } else {
+                // Người dùng quay lại web phim quá sớm -> Dừng đếm
+                if (lastLeftTime !== null) {
+                    accumulatedAwayTime += (Date.now() - lastLeftTime);
+                    lastLeftTime = null;
+                }
+
+                let totalAway = accumulatedAwayTime;
+                let remainingMs = adTargetDuration - totalAway;
+
+                if (remainingMs > 0) {
+                    document.getElementById('adWarningBox').style.display = 'block';
+                    document.getElementById('adActionBtn').style.display = 'block';
+                    document.getElementById('adStatusText').style.display = 'none';
+                }
             }
         });
+
+        function finishAd() {
+            closeModal('adModal');
+            // Lưu mốc thời gian đã vượt ad (miễn phí xem trong 3 tiếng tiếp theo)
+            localStorage.setItem('lastAdTime', Date.now());
+            if (currentPendingLink && currentPendingLink !== "undefined") {
+                window.open(currentPendingLink, '_blank');
+            }
+        }
 
         // --- ĐĂNG NHẬP VÀ KÍCH HOẠT ---
         async function handleLogin() {
@@ -247,7 +346,6 @@
         function handleCustomClick(event, lThuong, lVip, title, category) {
             event.preventDefault();
             
-            // XỬ LÝ MUA ACC TỰ ĐỘNG DỰA VÀO TIÊU ĐỀ
             if (category === 'ACC VIP') {
                 let days = 1; 
                 let t = title.toLowerCase();
@@ -280,12 +378,24 @@
             }
 
             fetch(API_URL + "?action=click&title=" + encodeURIComponent(title), { mode: 'no-cors' }).catch(e=>{});
+            
+            // Kiểm tra quyền VIP hoặc Cooldown xem quảng cáo 3 tiếng
             if (cUser && isVip) {
                 if (lVip && lVip !== "undefined") window.open(lVip, '_blank');
                 else alert("Nội dung VIP đang cập nhật!");
             } else {
-                if (lThuong && lThuong !== "undefined") window.open(lThuong, '_blank');
-                else alert("Chưa có link tải!");
+                let lastAd = localStorage.getItem('lastAdTime');
+                let now = Date.now();
+                let threeHours = 3 * 60 * 60 * 1000;
+
+                // Nếu trong vòng 3 tiếng trước đã xem quảng cáo rồi thì cho qua luôn
+                if (lastAd && (now - lastAd < threeHours)) {
+                    if (lThuong && lThuong !== "undefined") window.open(lThuong, '_blank');
+                    else alert("Chưa có link tải!");
+                } else {
+                    // Ngược lại, bắt buộc kích hoạt luồng vượt link quảng cáo 40s
+                    triggerAdFlow(lThuong);
+                }
             }
         }
 
@@ -303,7 +413,6 @@
             document.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
             if(el) el.classList.add('active');
             
-            // Tự đóng menu trên mobile khi click chọn tab
             if(window.innerWidth <= 768) {
                 document.getElementById('sidebarMenu').classList.remove('show');
             }
