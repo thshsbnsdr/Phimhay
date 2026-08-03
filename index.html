@@ -3,458 +3,329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phim Hay - VIP System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>PHIM HAY - XEM PHIM VIP</title>
     <style>
-        /* Mặc định Giao diện Tối (Dark Mode) */
         :root {
-            --bg-main: #0a0a0a;
-            --bg-card: #171717;
-            --bg-sidebar: #121212;
-            --text-main: #f8fafc;
-            --text-sub: #a3a3a3;
-            --border: #262626;
-            --panel: #1c1c1e;
-            --primary: #3b82f6;
-            --vip: #f59e0b;
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --sidebar-bg: #1e1e1e;
+            --card-bg: #242424;
+            --primary-color: #3b82f6;
         }
 
-        /* Giao diện Sáng (Light Mode) khi body có class light-mode */
         body.light-mode {
-            --bg-main: #f1f5f9;
-            --bg-card: #ffffff;
-            --bg-sidebar: #ffffff;
-            --text-main: #0f172a;
-            --text-sub: #64748b;
-            --border: #cbd5e1;
-            --panel: #e2e8f0;
+            --bg-color: #f0f2f5;
+            --text-color: #000000;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s, border-color 0.3s; }
-        body { background: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; }
-        
-        .sidebar { width: 280px; background: var(--bg-sidebar); padding: 30px 20px; border-right: 1px solid var(--border); position: fixed; height: 100vh; display: flex; flex-direction: column; z-index: 1001; }
-        .logo { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 20px; color: var(--text-main); }
-        .logo span { color: #ef4444; }
-        .user-panel { background: var(--panel); border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px; border: 1px solid var(--border); }
-        .login-btn { background: var(--primary); color: white; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .user-info { font-size: 14px; display: none; margin-bottom: 10px; }
-        .vip-badge { background: var(--vip); color: black; font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 10px; margin-left: 5px; }
-        .logout-btn { background: #ef4444; color: white; border: none; padding: 8px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; display: none; }
-        
-        .menu-item { padding: 14px 20px; margin-bottom: 10px; border-radius: 12px; display: flex; gap: 15px; color: var(--text-sub); cursor: pointer; font-weight: 600; }
-        .menu-item.active { background: rgba(59, 130, 246, 0.15); color: var(--primary); border-left: 4px solid var(--primary); }
-        
-        .close-menu-btn { display: none; background: #ef4444; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; margin-top: auto; cursor: pointer; text-align: center; }
-
-        .main-content { margin-left: 280px; width: calc(100% - 280px); padding: 30px 40px; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 15px; flex-wrap: wrap; }
-        .search-box { flex: 1; max-width: 400px; padding: 12px 18px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); font-size: 14px; outline: none; }
-        .theme-toggle { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; }
-
-        .tut-box { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 25px; color: var(--text-main); }
-        .tut-box h3 { color: var(--primary); margin-bottom: 8px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; align-items: start; }
-        
-        .card { background: var(--bg-card); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
-        
-        .media { width: 100%; background: #000; display: block; }
-        .media iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
-        .media img { 
-            width: 100%; 
-            height: auto; 
-            max-height: 480px; 
-            object-fit: cover; 
-            object-position: top center; 
-            display: block; 
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+            transition: 0.3s;
         }
 
-        .card-content { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-        .card h3 { font-size: 18px; margin-bottom: 10px; color: var(--text-main); }
-        .btn-group { display: flex; gap: 10px; margin-top: auto; }
-        .btn-main { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; background: var(--primary); color: white; text-align: center; }
-        .btn-main.vip-btn { background: var(--vip); color: black; }
-        
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; }
-        .modal-content { background: var(--bg-card); width: 420px; padding: 30px; border-radius: 16px; text-align: center; position: relative; border: 1px solid var(--border); color: var(--text-main); }
-        .close { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; background: none; border: none; color: var(--text-main); }
-        .input-box { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; background: var(--bg-main); border: 1px solid var(--border); color: var(--text-main); }
-        
-        .mobile-header { display: none; }
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .mobile-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
-            .menu-toggle { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-            .sidebar { left: -100%; box-shadow: 5px 0 20px rgba(0,0,0,0.8); transition: left 0.3s ease; }
-            .sidebar.show { left: 0; }
-            .close-menu-btn { display: block; }
-            .main-content { margin-left: 0; width: 100%; padding: 15px; }
+        /* Sidebar Menu */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            color: #ff4757;
+            margin-bottom: 30px;
+        }
+
+        .menu-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .theme-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #ff9f43;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        #searchInput {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            background: var(--sidebar-bg);
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        #tutBox {
+            background: var(--sidebar-bg);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            object-position: top center; /* Giúp ảnh cosplay dọc không bị cắt mất đầu */
+        }
+
+        .card-content {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .card-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .btn-play {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        /* Màn hình đếm ngược quảng cáo */
+        #ad-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            text-align: center;
+            padding-top: 20vh;
+            color: white;
+        }
+
+        #countdown-timer {
+            font-size: 80px;
+            font-weight: bold;
+            color: #ff4757;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
 
-    <div class="mobile-header">
-        <button class="menu-toggle" onclick="toggleMenu()">☰ MENU</button>
-        <div class="logo" style="margin:0; font-size:22px;">🎬 <span>PHIM HAY</span></div>
-    </div>
-
-    <!-- Modal Đăng Nhập & Kích Hoạt -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <button class="close" onclick="closeModal('loginModal')">✖</button>
-            <h2 style="margin-bottom:15px">👤 Hệ Thống VIP</h2>
-            <input type="text" id="user" class="input-box" placeholder="Tài khoản">
-            <input type="password" id="pass" class="input-box" placeholder="Mật khẩu">
-            <div id="loginMsg" style="margin-bottom:15px; font-size:14px; font-weight:bold;"></div>
-            <button class="btn-main" onclick="handleLogin()" style="width:100%">Đăng Nhập</button>
-        </div>
-    </div>
-
-    <!-- Modal Đếm Ngược Vượt Link Quảng Cáo -->
-    <div class="modal" id="adModal">
-        <div class="modal-content">
-            <h3 style="color: var(--vip); margin-bottom: 15px;">⏳ Xác Thực Quảng Cáo</h3>
-            
-            <p id="adStatusText" style="margin-bottom: 15px; font-size: 15px; line-height: 1.5;">
-                Hệ thống đã mở trang quảng cáo ở tab mới.<br>Vui lòng ở lại trang đó trong vòng <br>
-                <b id="countdownNum" style="font-size:32px; color:#ef4444; display:block; margin-top:10px;">20</b>
-            </p>
-            
-            <div id="adWarningBox" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 15px; border-radius: 8px; font-size: 14px; margin-bottom: 15px; display: none; line-height: 1.5;">
-                ⚠️ Bạn đã quay lại quá sớm!<br>Đồng hồ đã tạm dừng, bạn còn <b style="font-size:18px"><span id="pausedTime"></span> giây</b>.<br>Bấm nút bên dưới để quay lại trang quảng cáo.
-            </div>
-            
-            <button id="adActionBtn" class="btn-main" onclick="reopenAdTab()" style="margin-bottom: 10px; display: none;">🚀 Quay Lại Trang Quảng Cáo</button>
-            <button id="adDoneBtn" class="btn-main vip-btn" style="display: none; width: 100%; font-size: 16px; padding: 15px;" onclick="finishAd()">✅ ĐÃ XONG - XEM PHIM NGAY</button>
-        </div>
-    </div>
-
     <div class="sidebar" id="sidebarMenu">
-        <div class="logo">🎬 <span>PHIM HAY</span></div>
-        <div class="user-panel">
-            <button class="login-btn" id="btnLogin" onclick="openModal('loginModal')">Đăng Nhập VIP</button>
-            <div class="user-info" id="uInfo">Xin chào, <b id="dUser"></b> <span class="vip-badge">VIP</span></div>
-            <button class="logout-btn" id="btnOut" onclick="logout()">Đăng xuất</button>
-        </div>
-        <div class="menu-item active" onclick="changeTab('Video', this)">🎬 Phim / Video</div>
+        <h2>🎬 PHIM HAY</h2>
+        <div class="menu-item active" onclick="changeTab('Video', this)">🎥 Phim / Video</div>
         <div class="menu-item" onclick="changeTab('Anime', this)">🌸 Hoạt Hình Anime</div>
         <div class="menu-item" onclick="changeTab('ACC VIP', this)">🛒 ACC VIP</div>
-        
-        <button class="close-menu-btn" onclick="toggleMenu()">✖ Đóng Menu</button>
+        <button class="theme-btn" onclick="toggleTheme()">☀️ Giao Diện Sáng/Tối</button>
     </div>
 
-    <div class="main-content">
-        <div class="top-bar">
-            <input type="text" id="searchInput" class="search-box" placeholder="🔍 Tìm kiếm tên phim, anime..." oninput="filterData()">
-            <button class="theme-toggle" onclick="toggleTheme()"><span id="themeIcon">☀️</span> <span id="themeText">Giao Diện Sáng</span></button>
+    <div class="main">
+        <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm phim, anime..." oninput="filterData()">
+        
+        <div id="tutBox">
+            <h3>📖 Hướng Dẫn VIP</h3>
+            <p>Khách VIP bấm xem trực tiếp không quảng cáo!</p>
         </div>
-        <div class="tut-box" id="tutBox"></div>
-        <div id="content" class="grid"><p>⏳ Đang tải dữ liệu...</p></div>
+        
+        <div id="content" class="grid-container">
+            <h3>Đang tải dữ liệu, vui lòng chờ...</h3>
+        </div>
+    </div>
+
+    <!-- Màn hình chờ quảng cáo -->
+    <div id="ad-overlay">
+        <h2 style="color: #ff9f43;">Vui lòng xem quảng cáo để mở khóa phim</h2>
+        <p>Hệ thống tự động dừng đếm nếu bạn rời khỏi tab quảng cáo.</p>
+        <div id="countdown-timer">10</div>
+        <p>giây</p>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec"; 
+        // LINK API CỦA BẠN 
+        const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec";
         
         let allData = [];
         let currentTab = 'Video';
-        
-        let cUser = localStorage.getItem('pUser');
-        let isVip = localStorage.getItem('pVip') === 'yes';
+        let adClickCount = 1; // Biến theo dõi số lần click quảng cáo
+        let currentVideoUrl = "";
 
-        function checkUser() {
-            if (cUser && isVip) {
-                document.getElementById('btnLogin').style.display = 'none';
-                document.getElementById('uInfo').style.display = 'block';
-                document.getElementById('btnOut').style.display = 'block';
-                document.getElementById('dUser').innerText = cUser;
-            } else {
-                document.getElementById('btnLogin').style.display = 'block';
-                document.getElementById('uInfo').style.display = 'none';
-                document.getElementById('btnOut').style.display = 'none';
-            }
-        }
-        checkUser();
-
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        
-        function toggleTheme() {
-            const body = document.body;
-            body.classList.toggle('light-mode');
-            const isLight = body.classList.contains('light-mode');
-            
-            document.getElementById('themeIcon').innerText = isLight ? '🌙' : '☀️';
-            document.getElementById('themeText').innerText = isLight ? 'Giao Diện Tối' : 'Giao Diện Sáng';
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('theme') === 'light') {
-                document.body.classList.add('light-mode');
-                document.getElementById('themeIcon').innerText = '🌙';
-                document.getElementById('themeText').innerText = 'Giao Diện Tối';
-            }
-        });
-
-        function toggleMenu() { 
-            document.getElementById('sidebarMenu').classList.toggle('show'); 
-        }
-
-        // --- HỆ THỐNG VƯỢT LINK QUẢNG CÁO (20S, NGẪU NHIÊN 2 LINK) ---
-        const adLinks = [
-            "https://vt.tiktok.com/ZS9h1V6gaHtvv-SyyMO/",
-            "https://vt.tiktok.com/ZS9h1qSqLxnTQ-4Z9S1/"
-        ];
-
-        let currentPendingLink = "";
-        let adTargetDuration = 20000; // Đã đổi thành 20 giây
-        let accumulatedAwayTime = 0;
-        let lastLeftTime = null;
-        let adCheckInterval = null;
-        let activeAdUrl = "";
-
-        function triggerAdFlow(targetLink) {
-            currentPendingLink = targetLink;
-            activeAdUrl = adLinks[Math.floor(Math.random() * adLinks.length)];
-            window.open(activeAdUrl, '_blank');
-
-            accumulatedAwayTime = 0;
-            lastLeftTime = Date.now(); 
-            
-            openModal('adModal');
-            document.getElementById('countdownNum').innerText = "20"; // Khởi tạo hiển thị 20s
-            document.getElementById('adWarningBox').style.display = 'none';
-            document.getElementById('adActionBtn').style.display = 'none';
-            document.getElementById('adDoneBtn').style.display = 'none';
-            document.getElementById('adStatusText').style.display = 'block';
-
-            if(adCheckInterval) clearInterval(adCheckInterval);
-            adCheckInterval = setInterval(updateAdProgress, 500);
-        }
-
-        function reopenAdTab() {
-            window.open(activeAdUrl, '_blank');
-            lastLeftTime = Date.now();
-            document.getElementById('adWarningBox').style.display = 'none';
-            document.getElementById('adActionBtn').style.display = 'none';
-            document.getElementById('adStatusText').style.display = 'block';
-        }
-
-        function updateAdProgress() {
-            let modal = document.getElementById('adModal');
-            if (modal.style.display !== 'flex') {
-                clearInterval(adCheckInterval);
-                return;
-            }
-
-            let now = Date.now();
-            let totalAway = accumulatedAwayTime;
-            if (document.hidden === true && lastLeftTime !== null) {
-                totalAway += (now - lastLeftTime);
-            }
-
-            let remainingMs = adTargetDuration - totalAway;
-            let remainingSec = Math.ceil(remainingMs / 1000);
-            if (remainingSec < 0) remainingSec = 0;
-
-            if (remainingSec > 0) {
-                document.getElementById('countdownNum').innerText = remainingSec;
-            } else {
-                clearInterval(adCheckInterval);
-                document.getElementById('adStatusText').style.display = 'none';
-                document.getElementById('adWarningBox').style.display = 'none';
-                document.getElementById('adActionBtn').style.display = 'none';
-                document.getElementById('adDoneBtn').style.display = 'block';
-            }
-        }
-
-        // Bắt sự kiện người dùng chuyển tab
-        document.addEventListener('visibilitychange', function() {
-            let modal = document.getElementById('adModal');
-            if (modal.style.display !== 'flex') return;
-
-            if (document.hidden) {
-                // Đang ở tab quảng cáo
-                lastLeftTime = Date.now();
-                document.getElementById('adWarningBox').style.display = 'none';
-                document.getElementById('adActionBtn').style.display = 'none';
-                document.getElementById('adStatusText').style.display = 'block';
-            } else {
-                // Quay lại tab web phim
-                if (lastLeftTime !== null) {
-                    accumulatedAwayTime += (Date.now() - lastLeftTime);
-                    lastLeftTime = null;
-                }
-
-                let totalAway = accumulatedAwayTime;
-                let remainingMs = adTargetDuration - totalAway;
-                let remainingSec = Math.ceil(remainingMs / 1000);
-
-                // Nếu chưa đủ thời gian -> Hiện cảnh báo và thông báo số giây còn lại
-                if (remainingMs > 0) {
-                    document.getElementById('pausedTime').innerText = remainingSec;
-                    document.getElementById('countdownNum').innerText = remainingSec;
-                    document.getElementById('adWarningBox').style.display = 'block';
-                    document.getElementById('adActionBtn').style.display = 'block';
-                    document.getElementById('adStatusText').style.display = 'none';
-                }
-            }
-        });
-
-        function finishAd() {
-            closeModal('adModal');
-            localStorage.setItem('lastAdTime', Date.now()); // Miễn xem quảng cáo trong 3 tiếng
-            if (currentPendingLink && currentPendingLink !== "undefined") {
-                window.open(currentPendingLink, '_blank');
-            }
-        }
-
-        // --- ĐĂNG NHẬP VÀ KÍCH HOẠT ---
-        async function handleLogin() {
-            let u = document.getElementById('user').value.trim();
-            let p = document.getElementById('pass').value.trim();
-            let msg = document.getElementById('loginMsg');
-            if(!u || !p) return msg.innerHTML = "<span style='color:red'>Nhập đủ thông tin!</span>";
-            msg.innerHTML = "<span style='color:orange'>⏳ Đang kiểm tra...</span>";
-
-            try {
-                let res = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`);
-                let data = await res.json();
-                if (data.status === "success") {
-                    msg.innerHTML = `<span style='color:#10b981'>✅ Thành công! Hạn: ${data.expire}</span>`;
-                    localStorage.setItem('pUser', u); localStorage.setItem('pVip', 'yes');
-                    cUser = u; isVip = true; checkUser();
-                    setTimeout(() => closeModal('loginModal'), 2000);
-                } else if (data.status === "not_activated") {
-                    msg.innerHTML = `<span style='color:orange'>Chưa kích hoạt giờ!</span>
-                    <button onclick="activeAcc('${u}')" style="margin-top:10px; padding:8px; background:var(--vip); color:black; border:none; font-weight:bold; cursor:pointer; width:100%; border-radius:8px">🚀 KHỞI ĐỘNG GIỜ VIP</button>`;
-                } else {
-                    msg.innerHTML = `<span style='color:red'>❌ ${data.message}</span>`;
-                }
-            } catch(e) { msg.innerHTML = "<span style='color:red'>Lỗi máy chủ!</span>"; }
-        }
-
-        async function activeAcc(u) {
-            let msg = document.getElementById('loginMsg');
-            msg.innerHTML = "⏳ Đang kích hoạt...";
-            let res = await fetch(`${API_URL}?action=activate&username=${encodeURIComponent(u)}`);
-            let data = await res.json();
-            if(data.status === "success") msg.innerHTML = "<span style='color:#10b981'>✅ Kích hoạt thành công! Vui lòng bấm Đăng Nhập lại.</span>";
-            else msg.innerHTML = `<span style='color:red'>❌ ${data.message}</span>`;
-        }
-
-        function logout() { localStorage.removeItem('pUser'); localStorage.removeItem('pVip'); cUser = null; isVip = false; checkUser(); alert("Đã đăng xuất!"); }
-
-        function handleCustomClick(event, lThuong, lVip, title, category) {
-            event.preventDefault();
-            
-            if (category === 'ACC VIP') {
-                let days = 1; 
-                let t = title.toLowerCase();
-                if(t.includes('tuần') || t.includes('7')) days = 7;      
-                else if(t.includes('3 ngày')) days = 3;                  
-                else if(t.includes('tháng') || t.includes('30')) days = 30;
-
-                let btn = event.target;
-                let originalText = btn.innerText;
-                btn.innerText = "⏳ Đang lấy link...";
-                btn.style.opacity = "0.7";
-                
-                fetch(API_URL + "?action=get_link&days=" + days)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        btn.innerText = "Đang chuyển trang...";
-                        window.location.href = data.link; 
-                    } else {
-                        alert(data.message); 
-                        btn.innerText = originalText;
-                        btn.style.opacity = "1";
-                    }
-                }).catch(e => {
-                    alert("Lỗi máy chủ!");
-                    btn.innerText = originalText;
-                    btn.style.opacity = "1";
-                });
-                return;
-            }
-
-            fetch(API_URL + "?action=click&title=" + encodeURIComponent(title), { mode: 'no-cors' }).catch(e=>{});
-            
-            if (cUser && isVip) {
-                if (lVip && lVip !== "undefined") window.open(lVip, '_blank');
-                else alert("Nội dung VIP đang cập nhật!");
-            } else {
-                let lastAd = localStorage.getItem('lastAdTime');
-                let now = Date.now();
-                let threeHours = 3 * 60 * 60 * 1000;
-
-                if (lastAd && (now - lastAd < threeHours)) {
-                    if (lThuong && lThuong !== "undefined") window.open(lThuong, '_blank');
-                    else alert("Chưa có link tải!");
-                } else {
-                    triggerAdFlow(lThuong);
-                }
-            }
-        }
-
+        // Hàm tải dữ liệu (có ép nocache để chống lưu đệm)
         async function load() {
             try {
-                let res = await fetch(API_URL);
+                let res = await fetch(API_URL + "?nocache=" + new Date().getTime());
                 allData = await res.json();
-                allData.reverse();
-                changeTab('Video', document.querySelector('.menu-item'));
-            } catch(e) { document.getElementById('content').innerHTML = "Lỗi kết nối máy chủ!"; }
+                allData.reverse(); // Đẩy bài mới nhất lên đầu
+                changeTab('Video', document.querySelector('.menu-item.active'));
+            } catch(e) { 
+                document.getElementById('content').innerHTML = "<h3>Lỗi kết nối máy chủ! Hãy F5 tải lại trang.</h3>"; 
+            }
         }
 
+        // Hàm chuyển tab
         function changeTab(tab, el) {
             currentTab = tab;
             document.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
             if(el) el.classList.add('active');
             
-            if(window.innerWidth <= 768) {
-                document.getElementById('sidebarMenu').classList.remove('show');
-            }
-            
             let tutHtml = '';
             if(tab === "ACC VIP") {
                 tutHtml = `<h3>🛒 Mua ACC VIP</h3><p>Vui lòng bấm chọn gói bên dưới để lấy link thanh toán tự động!</p>`;
             } else {
-                tutHtml = `<h3>📖 Hướng Dẫn VIP</h3><p>Khách VIP bấm xem trực tiếp không quảng cáo!</p>`;
+                tutHtml = `<h3>📖 Hướng Dẫn</h3><p>Xem quảng cáo để mở khóa xem phim 3 tiếng!</p>`;
             }
             document.getElementById('tutBox').innerHTML = tutHtml;
-            renderList(allData.filter(x => x.category === tab));
+            
+            // Xóa khoảng trắng và không phân biệt chữ hoa chữ thường
+            renderList(allData.filter(x => x.category.trim().toLowerCase() === tab.trim().toLowerCase()));
         }
 
+        // Hàm tìm kiếm
         function filterData() {
             let keyword = document.getElementById('searchInput').value.toLowerCase();
-            let filtered = allData.filter(x => x.category === currentTab && x.title.toLowerCase().includes(keyword));
+            let filtered = allData.filter(x => 
+                x.category.trim().toLowerCase() === currentTab.trim().toLowerCase() && 
+                x.title.toLowerCase().includes(keyword)
+            );
             renderList(filtered);
         }
 
-        function renderList(items) {
+        // Hàm vẽ danh sách phim
+        function renderList(data) {
             let html = '';
-            items.forEach(i => {
-                let media = i.video && i.video.includes('embed') ? `<iframe src="${i.video}"></iframe>` : `<img src="${i.image || 'https://via.placeholder.com/300x400?text=NO+IMAGE'}">`;
-                let sTitle = i.title.replace(/'/g, "\\'");
-                let btnCls = currentTab === 'ACC VIP' ? 'btn-main vip-btn' : 'btn-main';
-                
+            data.forEach(item => {
                 html += `
                 <div class="card">
-                    <div class="media">${media}</div>
+                    <img src="${item.image}" alt="${item.title}">
                     <div class="card-content">
-                        <h3>${i.title}</h3>
-                        <p style="font-size:13px; color:var(--text-sub); margin-bottom:15px">${i.content ? i.content.replace(/\n/g, '<br>') : ''}</p>
-                        <div class="btn-group">
-                            <button onclick="handleCustomClick(event, '${i.linkThuong}', '${i.linkVip}', '${sTitle}', '${i.category}')" class="${btnCls}">${i.btnName}</button>
-                        </div>
+                        <h3>${item.title}</h3>
+                        <button class="btn-play" onclick="checkAdAndPlay('${item.linkThuong}')">${item.btnName}</button>
                     </div>
                 </div>`;
             });
-            document.getElementById('content').innerHTML = html || "<p>Không tìm thấy nội dung phù hợp!</p>";
+            document.getElementById('content').innerHTML = html;
         }
+
+        // Hàm chuyển giao diện Sáng/Tối
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+        }
+
+        // ==========================================
+        // HỆ THỐNG XỬ LÝ QUẢNG CÁO 2 BƯỚC
+        // ==========================================
+        function checkAdAndPlay(finalVideoUrl) {
+            let lastWatchTime = localStorage.getItem("lastWatchTime");
+            let now = new Date().getTime();
+            
+            // Nếu đã mở khóa VIP và chưa qua 3 tiếng (3 * 60 * 60 * 1000)
+            if (lastWatchTime && (now - lastWatchTime < 3 * 60 * 60 * 1000)) {
+                window.open(finalVideoUrl, "_blank");
+                return;
+            }
+
+            currentVideoUrl = finalVideoUrl;
+            let currentAdUrl = "";
+            let requiredTime = 20; 
+
+            // Logic phân luồng link quảng cáo
+            if (adClickCount === 1) {
+                // Lần 1: Link Azure, đếm 10s
+                currentAdUrl = "https://vnvip.eastasia.cloudapp.azure.com/j3wgo";
+                requiredTime = 10; 
+            } else {
+                // Lần 2: ĐIỀN LINK QUẢNG CÁO THỨ 2 CỦA BẠN VÀO ĐÂY, đếm 20s
+                currentAdUrl = "LINK_QUANG_CAO_THU_2_CUA_BAN_O_DAY"; 
+                requiredTime = 20; 
+            }
+
+            // Mở tab quảng cáo
+            window.open(currentAdUrl, "_blank");
+            
+            // Hiện màn hình đếm ngược
+            document.getElementById("ad-overlay").style.display = "block";
+            let countdownText = document.getElementById("countdown-timer");
+            let timeLeft = requiredTime;
+            countdownText.innerText = timeLeft;
+
+            // Bắt đầu đếm ngược (Watch-and-Stay)
+            let timerInterval = setInterval(() => {
+                // Chỉ đếm khi tab quảng cáo đang được mở (tab phim bị ẩn)
+                if (document.hidden) {
+                    timeLeft--;
+                    countdownText.innerText = timeLeft;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        document.getElementById("ad-overlay").style.display = "none";
+                        
+                        if (adClickCount === 1) {
+                            adClickCount = 2; // Nâng lên bước 2
+                            alert("Đã xong bước 1! Vui lòng bấm 'Xem ngay' lần nữa để hoàn thành bước 2.");
+                        } else {
+                            // Xong bước 2: Lưu thời gian VIP và reset về bước 1
+                            localStorage.setItem("lastWatchTime", new Date().getTime());
+                            adClickCount = 1; 
+                            alert("Mở khóa thành công! Bạn có 3 giờ xem phim không quảng cáo.");
+                            window.open(currentVideoUrl, "_blank"); // Mở phim
+                        }
+                    }
+                }
+            }, 1000);
+        }
+
+        // Bắt đầu tải dữ liệu khi vừa vào web
         load();
     </script>
 </body>
