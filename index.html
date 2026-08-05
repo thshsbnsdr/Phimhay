@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHIM HAY - XEM PHIM VIP</title>
+    <title>PHIM HAY - XEM PHIM VIP & TIKTOK</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -114,7 +114,7 @@
             width: 100%;
             height: 250px;
             object-fit: cover;
-            object-position: top center; /* Giúp ảnh cosplay dọc không bị cắt mất đầu */
+            object-position: top center; /* Giúp ảnh cosplay dọc không bị cắt đầu */
         }
 
         .card-content {
@@ -159,6 +159,51 @@
             color: #ff4757;
             margin: 20px 0;
         }
+
+        /* Hộp Modal phát video / TikTok trực tiếp trên web */
+        #video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            height: 80vh;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10001;
+        }
+
+        #player-container {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body>
@@ -175,8 +220,8 @@
         <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm phim, anime..." oninput="filterData()">
         
         <div id="tutBox">
-            <h3>📖 Hướng Dẫn VIP</h3>
-            <p>Khách VIP bấm xem trực tiếp không quảng cáo!</p>
+            <h3>📖 Hướng Dẫn</h3>
+            <p>Xem quảng cáo để mở khóa xem phim trực tiếp 3 tiếng!</p>
         </div>
         
         <div id="content" class="grid-container">
@@ -186,10 +231,20 @@
 
     <!-- Màn hình chờ quảng cáo -->
     <div id="ad-overlay">
-        <h2 style="color: #ff9f43;">Vui lòng xem quảng cáo để mở khóa phim</h2>
+        <h2 style="color: #ff9f43;">Vui lòng xem quảng cáo để mở khóa video</h2>
         <p>Hệ thống tự động dừng đếm nếu bạn rời khỏi tab quảng cáo.</p>
         <div id="countdown-timer">10</div>
         <p>giây</p>
+    </div>
+
+    <!-- Hộp Popup phát Video / TikTok trực tiếp -->
+    <div id="video-modal">
+        <div class="modal-box">
+            <button class="close-modal" onclick="closeVideoModal()">&times;</button>
+            <div id="player-container">
+                <!-- Nội dung video/iframe nhúng vào đây -->
+            </div>
+        </div>
     </div>
 
     <script>
@@ -227,7 +282,6 @@
             }
             document.getElementById('tutBox').innerHTML = tutHtml;
             
-            // Xóa khoảng trắng và không phân biệt chữ hoa chữ thường
             renderList(allData.filter(x => x.category.trim().toLowerCase() === tab.trim().toLowerCase()));
         }
 
@@ -263,15 +317,15 @@
         }
 
         // ==========================================
-        // HỆ THỐNG XỬ LÝ QUẢNG CÁO 2 BƯỚC
+        // HỆ THỐNG XỬ LÝ QUẢNG CÁO 2 BƯỚC & NHÚNG VIDEO/TIKTOK
         // ==========================================
         function checkAdAndPlay(finalVideoUrl) {
             let lastWatchTime = localStorage.getItem("lastWatchTime");
             let now = new Date().getTime();
             
-            // Nếu đã mở khóa VIP và chưa qua 3 tiếng (3 * 60 * 60 * 1000)
+            // Nếu đã mở khóa VIP và chưa qua 3 tiếng
             if (lastWatchTime && (now - lastWatchTime < 3 * 60 * 60 * 1000)) {
-                window.open(finalVideoUrl, "_blank");
+                openMediaOnWeb(finalVideoUrl);
                 return;
             }
 
@@ -279,13 +333,13 @@
             let currentAdUrl = "";
             let requiredTime = 20; 
 
-            // Logic phân luồng link quảng cáo
+            // Logic phân luồng quảng cáo
             if (adClickCount === 1) {
-                // Lần 1: Link Azure, đếm 10s
+                // Lần 1: Link Azure mới của bạn, đếm 10s
                 currentAdUrl = "https://vnvip.eastasia.cloudapp.azure.com/j3wgo";
                 requiredTime = 10; 
             } else {
-                // Lần 2: ĐIỀN LINK QUẢNG CÁO THỨ 2 CỦA BẠN VÀO ĐÂY, đếm 20s
+                // Lần 2: Thay link quảng cáo thứ 2 của bạn vào đây, đếm 20s
                 currentAdUrl = "LINK_QUANG_CAO_THU_2_CUA_BAN_O_DAY"; 
                 requiredTime = 20; 
             }
@@ -301,7 +355,6 @@
 
             // Bắt đầu đếm ngược (Watch-and-Stay)
             let timerInterval = setInterval(() => {
-                // Chỉ đếm khi tab quảng cáo đang được mở (tab phim bị ẩn)
                 if (document.hidden) {
                     timeLeft--;
                     countdownText.innerText = timeLeft;
@@ -311,18 +364,57 @@
                         document.getElementById("ad-overlay").style.display = "none";
                         
                         if (adClickCount === 1) {
-                            adClickCount = 2; // Nâng lên bước 2
+                            adClickCount = 2; // Chuyển sang bước 2
                             alert("Đã xong bước 1! Vui lòng bấm 'Xem ngay' lần nữa để hoàn thành bước 2.");
                         } else {
-                            // Xong bước 2: Lưu thời gian VIP và reset về bước 1
+                            // Hoàn thành bước 2: Lưu thời gian xem và mở video trực tiếp trên web
                             localStorage.setItem("lastWatchTime", new Date().getTime());
                             adClickCount = 1; 
-                            alert("Mở khóa thành công! Bạn có 3 giờ xem phim không quảng cáo.");
-                            window.open(currentVideoUrl, "_blank"); // Mở phim
+                            alert("Mở khóa thành công! Bạn có 3 giờ xem video không quảng cáo.");
+                            openMediaOnWeb(currentVideoUrl);
                         }
                     }
                 }
             }, 1000);
+        }
+
+        // Hàm mở video hoặc TikTok trực tiếp vào Modal trên web
+        function openMediaOnWeb(url) {
+            let container = document.getElementById("player-container");
+            container.innerHTML = "";
+
+            // Kiểm tra xem link có phải là TikTok không
+            if (url.includes("tiktok.com")) {
+                // Trích xuất ID video TikTok để nhúng khung phát chuẩn của TikTok
+                let embedUrl = getTikTokEmbedUrl(url);
+                container.innerHTML = `<iframe src="${embedUrl}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+            } else if (url.includes("youtube.com") || url.includes("youtu.be")) {
+                // Hỗ trợ cả YouTube nếu bạn muốn nhúng
+                let ytEmbed = url.includes("watch?v=") ? url.replace("watch?v=", "embed/") : url;
+                container.innerHTML = `<iframe src="${ytEmbed}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+            } else {
+                // Video thông thường hoặc link dạng mp4
+                container.innerHTML = `<video src="${url}" controls autoplay style="width:100%; height:100%; object-fit:contain;"></video>`;
+            }
+
+            // Hiển thị khung popup
+            document.getElementById("video-modal").style.display = "flex";
+        }
+
+        // Hàm chuyển đổi link TikTok thông thường sang link nhúng (Embed)
+        function getTikTokEmbedUrl(url) {
+            // VD: https://www.tiktok.com/@user/video/7123456789 -> https://www.tiktok.com/embed/v2/7123456789
+            let match = url.match(/\/video\/(\d+)/);
+            if (match && match[1]) {
+                return `https://www.tiktok.com/embed/v2/${match[1]}`;
+            }
+            return url;
+        }
+
+        // Đóng modal xem phim
+        function closeVideoModal() {
+            document.getElementById("video-modal").style.display = "none";
+            document.getElementById("player-container").innerHTML = ""; // Tắt video đang chạy ngầm
         }
 
         // Bắt đầu tải dữ liệu khi vừa vào web
