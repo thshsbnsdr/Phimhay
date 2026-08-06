@@ -3,266 +3,378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHIM HAY - XEM PHIM VIP & TIKTOK</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>PHIM HAY - XEM PHIM VIP</title>
     <style>
-        /* Mặc định Giao diện Tối (Dark Mode) */
         :root {
-            --bg-main: #0a0a0a;
-            --bg-card: #171717;
-            --bg-sidebar: #121212;
-            --text-main: #f8fafc;
-            --text-sub: #a3a3a3;
-            --border: #262626;
-            --panel: #1c1c1e;
-            --primary: #3b82f6;
-            --vip: #f59e0b;
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --sidebar-bg: #1e1e1e;
+            --card-bg: #242424;
+            --primary-color: #3b82f6;
         }
 
-        /* Giao diện Sáng (Light Mode) */
         body.light-mode {
-            --bg-main: #f1f5f9;
-            --bg-card: #ffffff;
-            --bg-sidebar: #ffffff;
-            --text-main: #0f172a;
-            --text-sub: #64748b;
-            --border: #cbd5e1;
-            --panel: #e2e8f0;
+            --bg-color: #f0f2f5;
+            --text-color: #000000;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s, border-color 0.3s; }
-        body { background: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; }
-        
-        .sidebar { width: 280px; background: var(--bg-sidebar); padding: 30px 20px; border-right: 1px solid var(--border); position: fixed; height: 100vh; display: flex; flex-direction: column; z-index: 1001; }
-        .logo { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 20px; color: var(--text-main); }
-        .logo span { color: #ef4444; }
-        .user-panel { background: var(--panel); border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 20px; border: 1px solid var(--border); }
-        .login-btn { background: var(--primary); color: white; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .user-info { font-size: 14px; display: none; margin-bottom: 10px; }
-        .vip-badge { background: var(--vip); color: black; font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 10px; margin-left: 5px; }
-        .logout-btn { background: #ef4444; color: white; border: none; padding: 8px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; display: none; }
-        
-        .menu-item { padding: 14px 20px; margin-bottom: 10px; border-radius: 12px; display: flex; gap: 15px; color: var(--text-sub); cursor: pointer; font-weight: 600; }
-        .menu-item.active { background: rgba(59, 130, 246, 0.15); color: var(--primary); border-left: 4px solid var(--primary); }
-        
-        .close-menu-btn { display: none; background: #ef4444; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; margin-top: auto; cursor: pointer; text-align: center; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+            transition: 0.3s;
+        }
 
-        .main-content { margin-left: 280px; width: calc(100% - 280px); padding: 30px 40px; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 15px; flex-wrap: wrap; }
-        .search-box { flex: 1; max-width: 400px; padding: 12px 18px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); font-size: 14px; outline: none; }
-        .theme-toggle { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        /* Sidebar Menu */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
 
-        .tut-box { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 25px; color: var(--text-main); }
-        .tut-box h3 { color: var(--primary); margin-bottom: 8px; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; align-items: start; }
-        
-        .card { background: var(--bg-card); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
-        
-        /* Đảm bảo Trình phát video TikTok MP4 nhúng đẹp */
-        .media { width: 100%; background: #000; display: block; height: 250px; overflow: hidden; }
-        .media iframe, .media video { width: 100%; height: 100%; object-fit: cover; object-position: top center; border: none; display: block; }
-        .media img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+        .sidebar h2 {
+            text-align: center;
+            color: #ff4757;
+            margin-bottom: 20px;
+        }
 
-        .card-content { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-        .card h3 { font-size: 18px; margin-bottom: 10px; color: var(--text-main); }
-        
+        /* Nút VIP và User Panel */
+        .login-btn-sidebar {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .vip-badge {
+            background: gold;
+            color: black;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 3px 6px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+
+        .menu-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .theme-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #ff9f43;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        #searchInput {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            background: var(--sidebar-bg);
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        #tutBox {
+            background: var(--sidebar-bg);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            object-position: top center;
+        }
+
+        .card-content {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .card-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .btn-play {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+
         /* Modal Đăng Nhập */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; }
-        .modal-content { background: var(--bg-card); width: 400px; padding: 30px; border-radius: 16px; text-align: center; position: relative; border: 1px solid var(--border); color: var(--text-main); }
-        .close { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; background: none; border: none; color: var(--text-main); }
-        .input-box { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; background: var(--bg-main); border: 1px solid var(--border); color: var(--text-main); }
-        
-        .mobile-header { display: none; }
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .mobile-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
-            .menu-toggle { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-            .sidebar { left: -100%; box-shadow: 5px 0 20px rgba(0,0,0,0.8); transition: left 0.3s ease; }
-            .sidebar.show { left: 0; }
-            .close-menu-btn { display: block; }
-            .main-content { margin-left: 0; width: 100%; padding: 15px; }
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 10000;
         }
+        .modal-content {
+            background: var(--card-bg); width: 350px; padding: 20px; border-radius: 10px;
+            text-align: center; position: relative; color: var(--text-color);
+        }
+        .close-btn {
+            position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px;
+        }
+        .input-box {
+            width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px;
+            border: 1px solid #ccc; box-sizing: border-box;
+        }
+
+        /* Modal Xem Video / TikTok */
+        #video-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 10001; justify-content: center; align-items: center;
+        }
+        .video-box {
+            position: relative; width: 100%; max-width: 400px; height: 80vh;
+            background: #000; border-radius: 10px; overflow: hidden;
+        }
+        .close-video {
+            position: absolute; top: 10px; right: 10px; background: red; color: white;
+            border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; z-index: 99;
+        }
+        #player-container { width: 100%; height: 100%; }
+
+        /* Màn hình đếm ngược quảng cáo */
+        #ad-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 9999; text-align: center; padding-top: 20vh; color: white;
+        }
+        #countdown-timer { font-size: 80px; font-weight: bold; color: #ff4757; margin: 20px 0; }
     </style>
 </head>
 <body>
 
-    <div class="mobile-header">
-        <button class="menu-toggle" onclick="toggleMenu()">☰ MENU</button>
-        <div class="logo" style="margin:0; font-size:22px;">🎬 <span>PHIM HAY</span></div>
-    </div>
-
-    <!-- Modal Đăng Nhập & Kích Hoạt -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <button class="close" onclick="closeModal('loginModal')">✖</button>
-            <h2 style="margin-bottom:15px">👤 Hệ Thống VIP</h2>
-            <input type="text" id="user" class="input-box" placeholder="Tài khoản">
-            <input type="password" id="pass" class="input-box" placeholder="Mật khẩu">
-            <div id="loginMsg" style="margin-bottom:15px; font-size:14px; font-weight:bold;"></div>
-            <button class="login-btn" onclick="handleLogin()" style="width:100%">Đăng Nhập</button>
-        </div>
-    </div>
-
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebarMenu">
-        <div class="logo">🎬 <span>PHIM HAY</span></div>
-        <div class="user-panel">
-            <button class="login-btn" id="btnLogin" onclick="openModal('loginModal')">Đăng Nhập VIP</button>
-            <div class="user-info" id="uInfo">Xin chào, <b id="dUser"></b> <span class="vip-badge">VIP</span></div>
-            <button class="logout-btn" id="btnOut" onclick="logout()">Đăng xuất</button>
+        <h2>🎬 PHIM HAY</h2>
+        
+        <!-- Khu vực VIP -->
+        <button class="login-btn-sidebar" id="btnOpenLogin" onclick="document.getElementById('loginModal').style.display='flex'">Đăng Nhập VIP</button>
+        <div id="userInfoPanel" style="display: none;">
+            <div class="user-info">Xin chào, <b id="displayUsername"></b> <span class="vip-badge">VIP</span></div>
+            <button class="logout-btn" onclick="logout()">Đăng xuất</button>
         </div>
-        <div class="menu-item active" onclick="changeTab('Video', this)">🎬 Phim / Video</div>
+
+        <div class="menu-item active" onclick="changeTab('Video', this)">🎥 Phim / Video</div>
         <div class="menu-item" onclick="changeTab('Anime', this)">🌸 Hoạt Hình Anime</div>
         <div class="menu-item" onclick="changeTab('ACC VIP', this)">🛒 ACC VIP</div>
-        
-        <button class="close-menu-btn" onclick="toggleMenu()">✖ Đóng Menu</button>
+        <button class="theme-btn" onclick="toggleTheme()">☀️ Giao Diện Sáng/Tối</button>
     </div>
 
-    <div class="main-content">
-        <div class="top-bar">
-            <input type="text" id="searchInput" class="search-box" placeholder="🔍 Tìm kiếm tên phim, anime..." oninput="filterData()">
-            <button class="theme-toggle" onclick="toggleTheme()"><span id="themeIcon">☀️</span> <span id="themeText">Giao Diện Sáng</span></button>
+    <!-- Main Content -->
+    <div class="main">
+        <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm phim, anime..." oninput="filterData()">
+        
+        <div id="tutBox">
+            <h3>📖 Hướng Dẫn</h3>
+            <p>Xem quảng cáo để mở khóa xem phim 3 tiếng!</p>
         </div>
-        <div class="tut-box" id="tutBox"></div>
-        <div id="content" class="grid"><p>⏳ Đang tải dữ liệu...</p></div>
+        
+        <div id="content" class="grid-container">
+            <h3>Đang tải dữ liệu, vui lòng chờ...</h3>
+        </div>
+    </div>
+
+    <!-- Modal Đăng Nhập -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="document.getElementById('loginModal').style.display='none'">&times;</span>
+            <h2>👤 Đăng Nhập VIP</h2>
+            <input type="text" id="username" class="input-box" placeholder="Tên đăng nhập">
+            <input type="password" id="password" class="input-box" placeholder="Mật khẩu">
+            <div id="loginMsg" style="margin-bottom:10px; font-weight:bold;"></div>
+            <button class="login-btn-sidebar" onclick="login()">Đăng Nhập</button>
+        </div>
+    </div>
+
+    <!-- Màn hình chờ quảng cáo -->
+    <div id="ad-overlay">
+        <h2 style="color: #ff9f43;">Vui lòng xem quảng cáo để mở khóa video</h2>
+        <p>Hệ thống tự động dừng đếm nếu bạn rời khỏi tab quảng cáo.</p>
+        <div id="countdown-timer">10</div>
+        <p>giây</p>
+    </div>
+
+    <!-- Modal Xem Video/TikTok -->
+    <div id="video-modal">
+        <div class="video-box">
+            <button class="close-video" onclick="closeVideoModal()">X</button>
+            <div id="player-container"></div>
+        </div>
     </div>
 
     <script>
-        // LINK API CỦA BẠN (Ví dụ: `Https://vnvip.eastasia.cloudapp.azure.com/j3wgo`)
+        // LINK API CỦA BẠN 
         const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec";
         
         let allData = [];
         let currentTab = 'Video';
+        let adClickCount = 1;
+        let currentVideoUrl = "";
         
-        let cUser = localStorage.getItem('pUser');
-        let isVip = localStorage.getItem('pVip') === 'yes';
+        // Quản lý trạng thái VIP
+        let isVip = localStorage.getItem('isVip') === 'true';
+        let currentUser = localStorage.getItem('currentUser');
 
-        function checkUser() {
-            if (cUser && isVip) {
-                document.getElementById('btnLogin').style.display = 'none';
-                document.getElementById('uInfo').style.display = 'block';
-                document.getElementById('btnOut').style.display = 'block';
-                document.getElementById('dUser').innerText = cUser;
+        function checkLoginState() {
+            if (isVip && currentUser) {
+                document.getElementById('btnOpenLogin').style.display = 'none';
+                document.getElementById('userInfoPanel').style.display = 'block';
+                document.getElementById('displayUsername').innerText = currentUser;
             } else {
-                document.getElementById('btnLogin').style.display = 'block';
-                document.getElementById('uInfo').style.display = 'none';
-                document.getElementById('btnOut').style.display = 'none';
+                document.getElementById('btnOpenLogin').style.display = 'block';
+                document.getElementById('userInfoPanel').style.display = 'none';
             }
         }
-        checkUser();
+        checkLoginState();
 
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        
-        function toggleTheme() {
-            const body = document.body;
-            body.classList.toggle('light-mode');
-            const isLight = body.classList.contains('light-mode');
-            
-            document.getElementById('themeIcon').innerText = isLight ? '🌙' : '☀️';
-            document.getElementById('themeText').innerText = isLight ? 'Giao Diện Tối' : 'Giao Diện Sáng';
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('theme') === 'light') {
-                document.body.classList.add('light-mode');
-                document.getElementById('themeIcon').innerText = '🌙';
-                document.getElementById('themeText').innerText = 'Giao Diện Tối';
-            }
-        });
-
-        function toggleMenu() { 
-            document.getElementById('sidebarMenu').classList.toggle('show'); 
-        }
-
-        // --- ĐĂNG NHẬP VÀ KÍCH HOẠT ---
-        async function handleLogin() {
-            let u = document.getElementById('user').value.trim();
-            let p = document.getElementById('pass').value.trim();
+        // Xử lý đăng nhập VIP
+        async function login() {
+            let u = document.getElementById('username').value.trim();
+            let p = document.getElementById('password').value.trim();
             let msg = document.getElementById('loginMsg');
-            if(!u || !p) return msg.innerHTML = "<span style='color:red'>Nhập đủ thông tin!</span>";
-            msg.innerHTML = "<span style='color:orange'>⏳ Đang kiểm tra...</span>";
+            
+            if(!u || !p) return msg.innerHTML = "<span style='color:red'>Vui lòng nhập đủ thông tin!</span>";
+            msg.innerHTML = "<span style='color:orange'>Đang kiểm tra...</span>";
 
             try {
-                let res = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`);
+                let res = await fetch(`${API_URL}?action=login&username=${u}&password=${p}`);
                 let data = await res.json();
+                
                 if (data.status === "success") {
-                    msg.innerHTML = `<span style='color:#10b981'>✅ Thành công! Hạn: ${data.expire}</span>`;
-                    localStorage.setItem('pUser', u); localStorage.setItem('pVip', 'yes');
-                    cUser = u; isVip = true; checkUser();
-                    setTimeout(() => closeModal('loginModal'), 2000);
+                    msg.innerHTML = `<span style='color:green'>Thành công! Hạn VIP: ${data.expire}</span>`;
+                    localStorage.setItem('isVip', 'true');
+                    localStorage.setItem('currentUser', u);
+                    isVip = true; currentUser = u;
+                    checkLoginState();
+                    setTimeout(() => document.getElementById('loginModal').style.display='none', 1500);
                 } else if (data.status === "not_activated") {
-                    msg.innerHTML = `<span style='color:orange'>Chưa kích hoạt giờ!</span>
-                    <button onclick="activeAcc('${u}')" style="margin-top:10px; padding:8px; background:var(--vip); color:black; border:none; font-weight:bold; cursor:pointer; width:100%; border-radius:8px">🚀 KHỞI ĐỘNG GIỜ VIP</button>`;
+                    msg.innerHTML = `<span style='color:orange'>Tài khoản chưa kích hoạt!</span>
+                    <button onclick="activateAcc('${u}')" style="margin-top:10px; padding:5px; background:gold; border:none; cursor:pointer; font-weight:bold;">Kích Hoạt Giờ VIP Ngay</button>`;
                 } else {
-                    msg.innerHTML = `<span style='color:red'>❌ ${data.message}</span>`;
+                    msg.innerHTML = `<span style='color:red'>${data.message}</span>`;
                 }
             } catch(e) { msg.innerHTML = "<span style='color:red'>Lỗi máy chủ!</span>"; }
         }
 
-        async function activeAcc(u) {
+        async function activateAcc(u) {
             let msg = document.getElementById('loginMsg');
-            msg.innerHTML = "⏳ Đang kích hoạt...";
-            let res = await fetch(`${API_URL}?action=activate&username=${encodeURIComponent(u)}`);
+            msg.innerHTML = "Đang kích hoạt...";
+            let res = await fetch(`${API_URL}?action=activate&username=${u}`);
             let data = await res.json();
-            if(data.status === "success") msg.innerHTML = "<span style='color:#10b981'>✅ Kích hoạt thành công! Vui lòng bấm Đăng Nhập lại.</span>";
-            else msg.innerHTML = `<span style='color:red'>❌ ${data.message}</span>`;
+            if(data.status === "success") msg.innerHTML = "<span style='color:green'>Kích hoạt thành công! Hãy đăng nhập lại.</span>";
+            else msg.innerHTML = `<span style='color:red'>${data.message}</span>`;
         }
 
-        function logout() { localStorage.removeItem('pUser'); localStorage.removeItem('pVip'); cUser = null; isVip = false; checkUser(); alert("Đã đăng xuất!"); }
-
-        function handleCustomClick(event, lThuong, lVip, title, category) {
-            event.preventDefault();
-            
-            if (category === 'ACC VIP') {
-                // ... logic lấy link mua acc...
-                return;
-            }
-
-            // Click log để đếm
-            fetch(API_URL + "?action=click&title=" + encodeURIComponent(title), { mode: 'no-cors' }).catch(e=>{});
-            
-            // Logic đăng nhập VIP
-            if (cUser && isVip) {
-                if (lVip && lVip !== "undefined") window.open(lVip, '_blank');
-                else alert("Nội dung VIP đang cập nhật!");
-            } else {
-                // Link thường có thể click mở tab ngoài hoặc do video render trực tiếp
-                if (lThuong && lThuong !== "undefined") window.open(lThuong, '_blank');
-                else alert("Chưa có link tải!");
-            }
+        function logout() {
+            localStorage.removeItem('isVip'); localStorage.removeItem('currentUser');
+            isVip = false; currentUser = null; checkLoginState(); alert("Đã đăng xuất!");
         }
 
-        // --- HÀM TẢI DỮ LIỆU CHỐNG CACHE & TỰ SỬA LỖI GÕ SAI ---
+        // Tải dữ liệu
         async function load() {
             try {
                 let res = await fetch(API_URL + "?nocache=" + new Date().getTime());
                 allData = await res.json();
-                allData.reverse();
+                allData.reverse(); 
                 changeTab('Video', document.querySelector('.menu-item.active'));
-            } catch(e) { document.getElementById('content').innerHTML = "Lỗi kết nối máy chủ!"; }
+            } catch(e) { document.getElementById('content').innerHTML = "<h3>Lỗi kết nối máy chủ!</h3>"; }
         }
 
-        // --- CHUYỂN TAB & SỬA LỖI GÕ SAI (VIDEO/ANIME) ---
         function changeTab(tab, el) {
             currentTab = tab;
             document.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
             if(el) el.classList.add('active');
             
-            if(window.innerWidth <= 768) {
-                document.getElementById('sidebarMenu').classList.remove('show');
-            }
-            
             let tutHtml = '';
             if(tab === "ACC VIP") {
                 tutHtml = `<h3>🛒 Mua ACC VIP</h3><p>Vui lòng bấm chọn gói bên dưới để lấy link thanh toán tự động!</p>`;
             } else {
-                tutHtml = `<h3>📖 Hướng Dẫn VIP</h3><p>Khách VIP bấm xem trực tiếp không quảng cáo!</p>`;
+                tutHtml = `<h3>📖 Hướng Dẫn</h3><p>Xem quảng cáo để mở khóa xem phim 3 tiếng!</p>`;
             }
             document.getElementById('tutBox').innerHTML = tutHtml;
             
-            // SỬA LỖI GÕ SAI (Video / Anime) DẠNG KHÔNG PHÂN BIỆT HOA THƯỜNG VÀ DỌN KHOẢNG TRẮNG
             renderList(allData.filter(x => x.category.trim().toLowerCase() === tab.trim().toLowerCase()));
         }
 
@@ -275,51 +387,152 @@
             renderList(filtered);
         }
 
-        // --- QUAN TRỌNG: NHÚNG VIDEO TIKTOK VÀ MP4 TRỰC TIẾP LÊN WEB ---
-        function renderList(items) {
+        // VẼ DANH SÁCH (Sửa lỗi ảnh)
+        function renderList(data) {
             let html = '';
-            items.forEach(i => {
-                let mediaContent = '';
-                
-                // KIỂM TRA LINK ĐỂ CHỌN TRÌNH PHÁT
-                if (i.linkThuong && i.linkThuong.includes("tiktok.com")) {
-                    // Nhúng trình phát TikTok trực tiếp
-                    let embedUrl = getTikTokEmbedUrl(i.linkThuong);
-                    mediaContent = `<iframe src="${embedUrl}" frameborder="0" allowfullscreen style="object-fit:cover;"></iframe>`;
-                } else if (i.linkThuong && i.linkThuong.endsWith('.mp4')) {
-                    // Nhúng trình phát video MP4 trực tiếp
-                    mediaContent = `<video src="${i.linkThuong}" controls autoplay style="width:100%; height:100%; object-fit:cover;"></video>`;
-                } else if (i.video && i.video.includes('embed')) {
-                    // Nhúng link video embed khác (VD YouTube)
-                    mediaContent = `<iframe src="${i.video}" allowfullscreen style="object-fit:cover;"></iframe>`;
-                } else {
-                    // Fallback sang ảnh bìa nếu không nhận dạng được video
-                    mediaContent = `<img src="${i.image || 'https://via.placeholder.com/300x400?text=NO+IMAGE'}" alt="${i.title}">`;
-                }
-
-                let sTitle = i.title.replace(/'/g, "\\'");
-                let btnName = i.category === 'ACC VIP' ? 'Mua ngay' : (i.linkThuong && (i.linkThuong.includes("tiktok") || i.linkThuong.endsWith(".mp4")) ? 'Xem trực tiếp' : 'Xem ngay');
-                
+            data.forEach(item => {
+                let safeTitle = item.title.replace(/'/g, "\\'");
                 html += `
                 <div class="card">
-                    <div class="media">${mediaContent}</div>
+                    <!-- Ảnh lỗi sẽ tự thay thế bằng hình xám -->
+                    <img src="${item.image}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/300x400?text=NO+IMAGE'">
                     <div class="card-content">
-                        <h3>${i.title}</h3>
-                        <button onclick="handleCustomClick(event, '${i.linkThuong}', '${i.linkVip}', '${sTitle}', '${i.category}')" class="login-btn">${btnName}</button>
+                        <h3>${item.title}</h3>
+                        <button class="btn-play" onclick="handleAction('${item.category}', '${safeTitle}', '${item.linkThuong}', '${item.linkVip}')">${item.btnName}</button>
                     </div>
                 </div>`;
             });
-            document.getElementById('content').innerHTML = html || "<p>Không tìm thấy nội dung phù hợp!</p>";
+            document.getElementById('content').innerHTML = html;
         }
 
-        // Hàm chuyển đổi link TikTok thông thường sang link nhúng (Embed)
+        // PHÂN LUỒNG: BẤM VÀO NÚT "XEM NGAY"
+        function handleAction(category, title, linkThuong, linkVip) {
+            // 1. Nếu đang ở tab Mua ACC VIP -> Gọi hàm mua VIP
+            if (category === 'ACC VIP') {
+                return buyVIP(title);
+            }
+
+            // 2. Nếu là khách VIP -> Xem luôn, ưu tiên link VIP
+            if (isVip && currentUser) {
+                let finalLink = (linkVip && linkVip !== "undefined") ? linkVip : linkThuong;
+                openMediaOnWeb(finalLink);
+                return;
+            }
+
+            // 3. Nếu là khách thường -> Phải xem Ads
+            checkAdAndPlay(linkThuong);
+        }
+
+        // --- CHỨC NĂNG MUA VIP BỊ QUÊN GIỜ ĐÃ TRỞ LẠI ---
+        async function buyVIP(title) {
+            let days = 1; // Mặc định
+            if(title.toUpperCase().includes('3 NGÀY')) days = 3;
+            else if(title.toUpperCase().includes('1 TUẦN') || title.toUpperCase().includes('7 NGÀY')) days = 7;
+            else if(title.toUpperCase().includes('1 THÁNG') || title.toUpperCase().includes('30 NGÀY')) days = 30;
+
+            alert("Đang tìm tài khoản và lấy link thanh toán. Vui lòng đợi vài giây...");
+            try {
+                let res = await fetch(`${API_URL}?action=get_link&days=${days}`);
+                let data = await res.json();
+                if(data.status === "success") {
+                    window.open(data.link, "_blank"); // Mở link thanh toán
+                } else {
+                    alert(data.message);
+                }
+            } catch(e) { alert("Lỗi mạng, không lấy được link thanh toán!"); }
+        }
+
+        // --- HỆ THỐNG ADS ---
+        function checkAdAndPlay(finalVideoUrl) {
+            let lastWatchTime = localStorage.getItem("lastWatchTime");
+            let now = new Date().getTime();
+            
+            if (lastWatchTime && (now - lastWatchTime < 3 * 60 * 60 * 1000)) {
+                openMediaOnWeb(finalVideoUrl);
+                return;
+            }
+
+            currentVideoUrl = finalVideoUrl;
+            let currentAdUrl = "";
+            let requiredTime = 20; 
+
+            if (adClickCount === 1) {
+                currentAdUrl = "https://vnvip.eastasia.cloudapp.azure.com/j3wgo";
+                requiredTime = 10; 
+            } else {
+                currentAdUrl = "LINK_QUANG_CAO_THU_2_CUA_BAN_O_DAY"; 
+                requiredTime = 20; 
+            }
+
+            window.open(currentAdUrl, "_blank");
+            
+            document.getElementById("ad-overlay").style.display = "block";
+            let countdownText = document.getElementById("countdown-timer");
+            let timeLeft = requiredTime;
+            countdownText.innerText = timeLeft;
+
+            let timerInterval = setInterval(() => {
+                if (document.hidden) {
+                    timeLeft--;
+                    countdownText.innerText = timeLeft;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        document.getElementById("ad-overlay").style.display = "none";
+                        
+                        if (adClickCount === 1) {
+                            adClickCount = 2; 
+                            alert("Đã xong bước 1! Vui lòng bấm 'Xem ngay' lần nữa để hoàn thành bước 2.");
+                        } else {
+                            localStorage.setItem("lastWatchTime", new Date().getTime());
+                            adClickCount = 1; 
+                            alert("Mở khóa thành công! Bạn có 3 giờ xem video không quảng cáo.");
+                            openMediaOnWeb(currentVideoUrl);
+                        }
+                    }
+                }
+            }, 1000);
+        }
+
+        // --- PHÁT TIKTOK TRỰC TIẾP TRÊN WEB BẰNG MODAL ---
+        function openMediaOnWeb(url) {
+            if(!url || url === "undefined" || url === "") {
+                alert("Phim này chưa có link!"); return;
+            }
+
+            let container = document.getElementById("player-container");
+            container.innerHTML = "";
+
+            if (url.includes("tiktok.com")) {
+                let embedUrl = getTikTokEmbedUrl(url);
+                container.innerHTML = `<iframe src="${embedUrl}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+                document.getElementById("video-modal").style.display = "flex";
+            } 
+            else if (url.endsWith('.mp4')) {
+                container.innerHTML = `<video src="${url}" controls autoplay style="width:100%; height:100%;"></video>`;
+                document.getElementById("video-modal").style.display = "flex";
+            }
+            else {
+                // Nếu là link web bình thường, mở sang tab mới cho đỡ bị lỗi web
+                window.open(url, "_blank");
+            }
+        }
+
         function getTikTokEmbedUrl(url) {
-            // VD: https://www.tiktok.com/@user/video/7123456789 -> https://www.tiktok.com/embed/v2/7123456789
             let match = url.match(/\/video\/(\d+)/);
             if (match && match[1]) {
                 return `https://www.tiktok.com/embed/v2/${match[1]}`;
             }
             return url;
+        }
+
+        function closeVideoModal() {
+            document.getElementById("video-modal").style.display = "none";
+            document.getElementById("player-container").innerHTML = ""; // Tắt tiếng video
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
         }
 
         load();
