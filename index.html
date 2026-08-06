@@ -285,7 +285,7 @@
     </div>
 
     <script>
-        // LINK API CỦA BẠN 
+        // --- CHÚ Ý: THAY ĐƯỜNG LINK API CỦA BẠN VÀO ĐÂY ---
         const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec";
         
         let allData = [];
@@ -407,25 +407,19 @@
 
         // PHÂN LUỒNG: BẤM VÀO NÚT "XEM NGAY"
         function handleAction(category, title, linkThuong, linkVip) {
-            // 1. Nếu đang ở tab Mua ACC VIP -> Gọi hàm mua VIP
-            if (category === 'ACC VIP') {
-                return buyVIP(title);
-            }
+            if (category === 'ACC VIP') return buyVIP(title);
 
-            // 2. Nếu là khách VIP -> Xem luôn, ưu tiên link VIP
             if (isVip && currentUser) {
                 let finalLink = (linkVip && linkVip !== "undefined") ? linkVip : linkThuong;
                 openMediaOnWeb(finalLink);
                 return;
             }
 
-            // 3. Nếu là khách thường -> Phải xem Ads
             checkAdAndPlay(linkThuong);
         }
 
-        // --- CHỨC NĂNG MUA VIP BỊ QUÊN GIỜ ĐÃ TRỞ LẠI ---
         async function buyVIP(title) {
-            let days = 1; // Mặc định
+            let days = 1;
             if(title.toUpperCase().includes('3 NGÀY')) days = 3;
             else if(title.toUpperCase().includes('1 TUẦN') || title.toUpperCase().includes('7 NGÀY')) days = 7;
             else if(title.toUpperCase().includes('1 THÁNG') || title.toUpperCase().includes('30 NGÀY')) days = 30;
@@ -435,7 +429,7 @@
                 let res = await fetch(`${API_URL}?action=get_link&days=${days}`);
                 let data = await res.json();
                 if(data.status === "success") {
-                    window.open(data.link, "_blank"); // Mở link thanh toán
+                    window.open(data.link, "_blank"); 
                 } else {
                     alert(data.message);
                 }
@@ -460,6 +454,7 @@
                 currentAdUrl = "https://vnvip.eastasia.cloudapp.azure.com/j3wgo";
                 requiredTime = 10; 
             } else {
+                // --- CHÚ Ý: ĐIỀN LINK QUẢNG CÁO 2 CỦA BẠN VÀO ĐÂY ---
                 currentAdUrl = "LINK_QUANG_CAO_THU_2_CUA_BAN_O_DAY"; 
                 requiredTime = 20; 
             }
@@ -513,7 +508,6 @@
                 document.getElementById("video-modal").style.display = "flex";
             }
             else {
-                // Nếu là link web bình thường, mở sang tab mới cho đỡ bị lỗi web
                 window.open(url, "_blank");
             }
         }
@@ -528,7 +522,7 @@
 
         function closeVideoModal() {
             document.getElementById("video-modal").style.display = "none";
-            document.getElementById("player-container").innerHTML = ""; // Tắt tiếng video
+            document.getElementById("player-container").innerHTML = ""; 
         }
 
         function toggleTheme() {
