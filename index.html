@@ -89,11 +89,7 @@
             border: none;
         }
 
-        .img-fit {
-            object-fit: cover;
-            object-position: top center;
-        }
-
+        /* Lớp học cũ bị thay bằng class động trong JS để hỗ trợ ACC VIP */
         .card-content { padding: 15px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .card-content h3 { margin: 0 0 15px 0; font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
@@ -133,8 +129,8 @@
         }
         #countdown-timer { font-size: 80px; font-weight: bold; color: #ff4757; margin: 10px 0; }
         #ad-warning {
-            color: #ff4d4d; background: rgba(255,0,0,0.1); padding: 15px; 
-            border-radius: 8px; border: 1px solid red; font-size: 16px; font-weight: bold;
+            color: #ffb84d; background: rgba(255, 184, 77, 0.1); padding: 15px; 
+            border-radius: 8px; border: 1px solid #ffb84d; font-size: 16px; font-weight: bold;
             display: inline-block; margin-bottom: 20px; max-width: 90%;
         }
         .btn-next-link {
@@ -184,10 +180,10 @@
         </div>
     </div>
 
-    <!-- Overlay Chờ Quảng Cáo -->
+    <!-- Overlay Chờ Quảng Cáo (ĐÃ ĐƯỢC LÀM LẠI TRƠN TRU HƠN) -->
     <div id="ad-overlay">
         <h2 id="ad-title" style="color: #ff9f43; margin-bottom: 20px; font-size: 22px;">Hệ thống đang chạy thời gian...</h2>
-        <div id="ad-warning">⚠️ Hệ thống đã dừng! Yêu cầu quay lại trang quảng cáo để tiếp tục.</div>
+        <div id="ad-warning">⚠️ Vui lòng giữ tab quảng cáo để ủng hộ Admin nhé!</div>
         <div id="countdown-timer">15</div>
         <p id="ad-text-sec" style="font-size: 18px;">giây</p>
         <button id="btnNextLink" class="btn-next-link">▶ XEM NGAY ▶</button>
@@ -300,39 +296,42 @@
             renderList(filtered);
         }
 
-        // Tạo phần tử hiển thị Media trên thẻ (TikTok, YouTube, MP4, hoặc Ảnh)
-        function createMediaPreviewHTML(videoUrl, imageUrl, title) {
+        // === ĐÃ SỬA: Tiktok giấu thanh cuộn, ACC VIP hiển thị đủ chữ ===
+        function createMediaPreviewHTML(videoUrl, imageUrl, title, category) {
             let vUrl = (videoUrl || "").trim();
             let iUrl = (imageUrl || "").trim();
+            let cat = (category || "").trim().toLowerCase();
 
-            // 1. Kiểm tra TikTok embed
+            // 1. Kiểm tra TikTok embed (Thêm pointer-events:none và overflow:hidden để mượt như ảnh)
             let ttMatch = vUrl.match(/video\/(\d+)/);
             if (ttMatch && ttMatch[1]) {
-                return `<iframe class="card-media-item" src="https://www.tiktok.com/embed/v2/${ttMatch[1]}" frameborder="0" allowfullscreen></iframe>`;
+                return `<iframe class="card-media-item" src="https://www.tiktok.com/embed/v2/${ttMatch[1]}" frameborder="0" scrolling="no" allowfullscreen style="width: 100%; height: 100%; pointer-events: none; overflow: hidden;"></iframe>`;
             }
 
-            // 2. Kiểm tra YouTube embed
+            // 2. YouTube embed
             let ytMatch = vUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
             if (ytMatch && ytMatch[1]) {
-                return `<iframe class="card-media-item" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                return `<iframe class="card-media-item" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="pointer-events: none;"></iframe>`;
             }
 
-            // 3. Kiểm tra file Video trực tiếp
+            // 3. Video MP4 trực tiếp
             if (vUrl.match(/\.(mp4|webm|ogg)$/i)) {
-                return `<video class="card-media-item" src="${vUrl}" controls preload="metadata"></video>`;
+                return `<video class="card-media-item" src="${vUrl}" preload="metadata" style="object-fit: cover; pointer-events: none;"></video>`;
             }
 
-            // 4. Mặc định dùng Ảnh bìa
+            // 4. Mặc định dùng Ảnh bìa (CÓ PHÂN LOẠI CHO ACC VIP KHÔNG BỊ CẮT CHỮ)
             let finalImg = iUrl || (vUrl.match(/\.(jpeg|jpg|gif|png|webp)/i) ? vUrl : '');
             if (!finalImg) finalImg = 'https://via.placeholder.com/300x400?text=NO+IMAGE';
 
-            return `<img class="card-media-item img-fit" src="${finalImg}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x400?text=NO+IMAGE'">`;
+            let fitStyle = (cat === 'acc vip') ? 'object-fit: contain; background: #000;' : 'object-fit: cover; object-position: top center;';
+
+            return `<img class="card-media-item" style="${fitStyle}" src="${finalImg}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x400?text=NO+IMAGE'">`;
         }
 
         function renderList(data) {
             let html = '';
             data.forEach((item, index) => {
-                let mediaHtml = createMediaPreviewHTML(item.video, item.image, item.title);
+                let mediaHtml = createMediaPreviewHTML(item.video, item.image, item.title, item.category);
                 
                 html += `
                 <div class="card">
@@ -390,7 +389,7 @@
             } catch(e) { alert("Lỗi mạng!"); }
         }
 
-        // LUỒNG CHẠY QUẢNG CÁO & ĐẾM NGƯỢC
+        // === ĐÃ SỬA: LUÔN LUÔN ĐẾM NGƯỢC, KHÔNG BỊ DỪNG LẠI NỮA ===
         function startAdFlow(finalDestUrl) {
             let lastWatchTime = localStorage.getItem("lastWatchTime");
             let now = new Date().getTime();
@@ -418,36 +417,33 @@
             overlay.style.display = "block";
             timerEl.style.display = "block";
             textSec.style.display = "block";
-            warningEl.style.display = "none";
+            warningEl.style.display = "inline-block";
             btnNext.style.display = "none";
-            adTitle.innerText = "Vui lòng mở tab quảng cáo để chạy thời gian...";
+            adTitle.innerText = "Vui lòng đợi giây lát...";
             
             let timeLeft = 15;
             timerEl.innerText = timeLeft;
 
             let timerInterval = setInterval(() => {
-                if (document.hidden) {
-                    warningEl.style.display = "none"; 
-                    timeLeft--;
-                    timerEl.innerText = timeLeft;
+                // Đã xóa điều kiện kiểm tra tab ẩn. Timer giờ sẽ tự giảm không bao giờ dừng.
+                timeLeft--;
+                timerEl.innerText = timeLeft;
 
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        localStorage.setItem("lastWatchTime", new Date().getTime()); // Lưu mốc 30 phút
-                        
-                        timerEl.style.display = "none";
-                        textSec.style.display = "none";
-                        adTitle.innerText = "Hoàn tất! Bấm nút bên dưới để chuyển tiếp";
-                        
-                        btnNext.style.display = "inline-block"; 
-                        
-                        btnNext.onclick = function() {
-                            overlay.style.display = "none";
-                            window.open(targetDestinationUrl, '_blank'); // Mở link đích (Link Thường)
-                        };
-                    }
-                } else {
-                    warningEl.style.display = "inline-block"; 
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    localStorage.setItem("lastWatchTime", new Date().getTime()); // Lưu mốc 30 phút
+                    
+                    timerEl.style.display = "none";
+                    textSec.style.display = "none";
+                    adTitle.innerText = "Hoàn tất! Bấm nút bên dưới để chuyển tiếp";
+                    warningEl.style.display = "none"; // Ẩn cảnh báo
+                    
+                    btnNext.style.display = "inline-block"; 
+                    
+                    btnNext.onclick = function() {
+                        overlay.style.display = "none";
+                        window.open(targetDestinationUrl, '_blank'); 
+                    };
                 }
             }, 1000);
         }
