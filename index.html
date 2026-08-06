@@ -225,11 +225,9 @@
 </head>
 <body>
 
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebarMenu">
         <h2>🎬 PHIM HAY</h2>
         
-        <!-- Khu vực VIP -->
         <button class="login-btn-sidebar" id="btnOpenLogin" onclick="document.getElementById('loginModal').style.display='flex'">Đăng Nhập VIP</button>
         <div id="userInfoPanel" style="display: none;">
             <div class="user-info">Xin chào, <b id="displayUsername"></b> <span class="vip-badge">VIP</span></div>
@@ -242,21 +240,17 @@
         <button class="theme-btn" onclick="toggleTheme()">☀️ Giao Diện Sáng/Tối</button>
     </div>
 
-    <!-- Main Content -->
     <div class="main">
         <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm phim, anime..." oninput="filterData()">
-        
         <div id="tutBox">
             <h3>📖 Hướng Dẫn</h3>
             <p>Xem quảng cáo để mở khóa xem phim 3 tiếng!</p>
         </div>
-        
         <div id="content" class="grid-container">
             <h3>Đang tải dữ liệu, vui lòng chờ...</h3>
         </div>
     </div>
 
-    <!-- Modal Đăng Nhập -->
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <span class="close-btn" onclick="document.getElementById('loginModal').style.display='none'">&times;</span>
@@ -268,7 +262,6 @@
         </div>
     </div>
 
-    <!-- Màn hình chờ quảng cáo -->
     <div id="ad-overlay">
         <h2 style="color: #ff9f43;">Vui lòng xem quảng cáo để mở khóa video</h2>
         <p>Hệ thống tự động dừng đếm nếu bạn rời khỏi tab quảng cáo.</p>
@@ -276,7 +269,6 @@
         <p>giây</p>
     </div>
 
-    <!-- Modal Xem Video/TikTok -->
     <div id="video-modal">
         <div class="video-box">
             <button class="close-video" onclick="closeVideoModal()">X</button>
@@ -285,15 +277,14 @@
     </div>
 
     <script>
-        // --- CHÚ Ý: THAY ĐƯỜNG LINK API CỦA BẠN VÀO ĐÂY ---
+        // --- CHÚ Ý: ĐẢM BẢO LINK API DƯỚI ĐÂY LÀ ĐÚNG ---
         const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec";
         
         let allData = [];
         let currentTab = 'Video';
         let adClickCount = 1;
-        let currentVideoUrl = "";
+        let currentVideoUrl = ""; // Sẽ lưu đúng link từ Cột E (Video)
         
-        // Quản lý trạng thái VIP
         let isVip = localStorage.getItem('isVip') === 'true';
         let currentUser = localStorage.getItem('currentUser');
 
@@ -309,7 +300,6 @@
         }
         checkLoginState();
 
-        // Xử lý đăng nhập VIP
         async function login() {
             let u = document.getElementById('username').value.trim();
             let p = document.getElementById('password').value.trim();
@@ -352,7 +342,6 @@
             isVip = false; currentUser = null; checkLoginState(); alert("Đã đăng xuất!");
         }
 
-        // Tải dữ liệu
         async function load() {
             try {
                 let res = await fetch(API_URL + "?nocache=" + new Date().getTime());
@@ -387,35 +376,36 @@
             renderList(filtered);
         }
 
-        // VẼ DANH SÁCH (Sửa lỗi ảnh)
+        // === ĐÃ SỬA LỖI Ở ĐÂY: TRUYỀN ĐÚNG CỘT "VIDEO" (item.video) VÀO NÚT BẤM ===
         function renderList(data) {
             let html = '';
             data.forEach(item => {
                 let safeTitle = item.title.replace(/'/g, "\\'");
                 html += `
                 <div class="card">
-                    <!-- Ảnh lỗi sẽ tự thay thế bằng hình xám -->
                     <img src="${item.image}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/300x400?text=NO+IMAGE'">
                     <div class="card-content">
                         <h3>${item.title}</h3>
-                        <button class="btn-play" onclick="handleAction('${item.category}', '${safeTitle}', '${item.linkThuong}', '${item.linkVip}')">${item.btnName}</button>
+                        <button class="btn-play" onclick="handleAction('${item.category}', '${safeTitle}', '${item.video}', '${item.linkVip}')">${item.btnName}</button>
                     </div>
                 </div>`;
             });
             document.getElementById('content').innerHTML = html;
         }
 
-        // PHÂN LUỒNG: BẤM VÀO NÚT "XEM NGAY"
-        function handleAction(category, title, linkThuong, linkVip) {
+        // === PHÂN LUỒNG: VIP BỎ QUA QUẢNG CÁO ===
+        function handleAction(category, title, videoUrl, linkVip) {
             if (category === 'ACC VIP') return buyVIP(title);
 
+            // NẾU LÀ TÀI KHOẢN VIP -> BỎ QUA QUẢNG CÁO, MỞ LUÔN PHIM
             if (isVip && currentUser) {
-                let finalLink = (linkVip && linkVip !== "undefined") ? linkVip : linkThuong;
+                let finalLink = (linkVip && linkVip !== "undefined" && linkVip !== "") ? linkVip : videoUrl;
                 openMediaOnWeb(finalLink);
                 return;
             }
 
-            checkAdAndPlay(linkThuong);
+            // NẾU LÀ KHÁCH THƯỜNG -> CHẠY VÀO HỆ THỐNG ADS ĐẾM NGƯỢC
+            checkAdAndPlay(videoUrl);
         }
 
         async function buyVIP(title) {
@@ -441,6 +431,7 @@
             let lastWatchTime = localStorage.getItem("lastWatchTime");
             let now = new Date().getTime();
             
+            // Nếu vẫn trong 3 tiếng -> Mở luôn không cần ads
             if (lastWatchTime && (now - lastWatchTime < 3 * 60 * 60 * 1000)) {
                 openMediaOnWeb(finalVideoUrl);
                 return;
@@ -482,6 +473,7 @@
                             localStorage.setItem("lastWatchTime", new Date().getTime());
                             adClickCount = 1; 
                             alert("Mở khóa thành công! Bạn có 3 giờ xem video không quảng cáo.");
+                            // GỌI HÀM MỞ VIDEO SAU KHI XEM XONG ADS
                             openMediaOnWeb(currentVideoUrl);
                         }
                     }
@@ -489,35 +481,36 @@
             }, 1000);
         }
 
-        // --- PHÁT TIKTOK TRỰC TIẾP TRÊN WEB BẰNG MODAL ---
+        // --- MỞ VIDEO HOẶC TIKTOK ---
         function openMediaOnWeb(url) {
             if(!url || url === "undefined" || url === "") {
-                alert("Phim này chưa có link!"); return;
+                alert("Bạn chưa điền link Phim/Video vào Google Sheets (Cột E)!"); 
+                return;
             }
 
             let container = document.getElementById("player-container");
             container.innerHTML = "";
 
             if (url.includes("tiktok.com")) {
-                let embedUrl = getTikTokEmbedUrl(url);
-                container.innerHTML = `<iframe src="${embedUrl}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
-                document.getElementById("video-modal").style.display = "flex";
+                let match = url.match(/\/video\/(\d+)/);
+                if (match && match[1]) {
+                    // Nếu là link TikTok chuẩn (có ID) -> Hiện trong web
+                    let embedUrl = `https://www.tiktok.com/embed/v2/${match[1]}`;
+                    container.innerHTML = `<iframe src="${embedUrl}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+                    document.getElementById("video-modal").style.display = "flex";
+                } else {
+                    // Nếu là link Tiktok rút gọn (vt.tiktok) -> Mở tab mới để tránh lỗi đen xì
+                    window.open(url, "_blank");
+                }
             } 
             else if (url.endsWith('.mp4')) {
                 container.innerHTML = `<video src="${url}" controls autoplay style="width:100%; height:100%;"></video>`;
                 document.getElementById("video-modal").style.display = "flex";
             }
             else {
+                // Các link web khác
                 window.open(url, "_blank");
             }
-        }
-
-        function getTikTokEmbedUrl(url) {
-            let match = url.match(/\/video\/(\d+)/);
-            if (match && match[1]) {
-                return `https://www.tiktok.com/embed/v2/${match[1]}`;
-            }
-            return url;
         }
 
         function closeVideoModal() {
