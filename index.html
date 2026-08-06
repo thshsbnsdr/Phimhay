@@ -89,7 +89,6 @@
             border: none;
         }
 
-        /* Lớp học cũ bị thay bằng class động trong JS để hỗ trợ ACC VIP */
         .card-content { padding: 15px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .card-content h3 { margin: 0 0 15px 0; font-size: 15px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
@@ -128,11 +127,13 @@
             box-sizing: border-box; padding-left: 10px; padding-right: 10px;
         }
         #countdown-timer { font-size: 80px; font-weight: bold; color: #ff4757; margin: 10px 0; }
+        
         #ad-warning {
             color: #ffb84d; background: rgba(255, 184, 77, 0.1); padding: 15px; 
             border-radius: 8px; border: 1px solid #ffb84d; font-size: 16px; font-weight: bold;
-            display: inline-block; margin-bottom: 20px; max-width: 90%;
+            display: none; margin-bottom: 20px; max-width: 90%; margin-left: auto; margin-right: auto;
         }
+
         .btn-next-link {
             display: none; padding: 15px 40px; font-size: 20px; font-weight: bold;
             background: var(--primary-color); color: white; border: none; border-radius: 10px; cursor: pointer;
@@ -180,11 +181,11 @@
         </div>
     </div>
 
-    <!-- Overlay Chờ Quảng Cáo (ĐÃ ĐƯỢC LÀM LẠI TRƠN TRU HƠN) -->
+    <!-- Overlay Chờ Quảng Cáo -->
     <div id="ad-overlay">
         <h2 id="ad-title" style="color: #ff9f43; margin-bottom: 20px; font-size: 22px;">Hệ thống đang chạy thời gian...</h2>
-        <div id="ad-warning">⚠️ Vui lòng giữ tab quảng cáo để ủng hộ Admin nhé!</div>
-        <div id="countdown-timer">15</div>
+        <div id="ad-warning">⚠️ Thời gian đã dừng! Vui lòng quay lại tab quảng cáo để tiếp tục đếm.</div>
+        <div id="countdown-timer">10</div>
         <p id="ad-text-sec" style="font-size: 18px;">giây</p>
         <button id="btnNextLink" class="btn-next-link">▶ XEM NGAY ▶</button>
     </div>
@@ -252,7 +253,6 @@
             isVip = false; currentUser = null; checkLoginState(); alert("Đã đăng xuất!");
         }
 
-        // Tự động chuẩn hóa dữ liệu từ Google Sheets
         function normalizeItem(item) {
             return {
                 category: item.category || item['Chuyên mục'] || item.chuyenMuc || '',
@@ -296,30 +296,25 @@
             renderList(filtered);
         }
 
-        // === ĐÃ SỬA: Tiktok giấu thanh cuộn, ACC VIP hiển thị đủ chữ ===
         function createMediaPreviewHTML(videoUrl, imageUrl, title, category) {
             let vUrl = (videoUrl || "").trim();
             let iUrl = (imageUrl || "").trim();
             let cat = (category || "").trim().toLowerCase();
 
-            // 1. Kiểm tra TikTok embed (Thêm pointer-events:none và overflow:hidden để mượt như ảnh)
             let ttMatch = vUrl.match(/video\/(\d+)/);
             if (ttMatch && ttMatch[1]) {
                 return `<iframe class="card-media-item" src="https://www.tiktok.com/embed/v2/${ttMatch[1]}" frameborder="0" scrolling="no" allowfullscreen style="width: 100%; height: 100%; pointer-events: none; overflow: hidden;"></iframe>`;
             }
 
-            // 2. YouTube embed
             let ytMatch = vUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
             if (ytMatch && ytMatch[1]) {
                 return `<iframe class="card-media-item" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="pointer-events: none;"></iframe>`;
             }
 
-            // 3. Video MP4 trực tiếp
             if (vUrl.match(/\.(mp4|webm|ogg)$/i)) {
                 return `<video class="card-media-item" src="${vUrl}" preload="metadata" style="object-fit: cover; pointer-events: none;"></video>`;
             }
 
-            // 4. Mặc định dùng Ảnh bìa (CÓ PHÂN LOẠI CHO ACC VIP KHÔNG BỊ CẮT CHỮ)
             let finalImg = iUrl || (vUrl.match(/\.(jpeg|jpg|gif|png|webp)/i) ? vUrl : '');
             if (!finalImg) finalImg = 'https://via.placeholder.com/300x400?text=NO+IMAGE';
 
@@ -358,7 +353,6 @@
                 return buyVIP(item.title);
             }
 
-            // NẾU LÀ VIP -> Chuyển thẳng tới Link VIP
             if (isVip && currentUser) {
                 let targetVip = (item.linkVip && item.linkVip !== "undefined" && item.linkVip.trim() !== "") ? item.linkVip : item.linkThuong;
                 if (!targetVip) return alert("Chưa gắn Link VIP trong file Google Sheet!");
@@ -366,7 +360,6 @@
                 return;
             }
 
-            // NẾU LÀ KHÁCH THƯỜNG -> Chạy luồng Quảng cáo rồi qua Link Thường
             if (!item.linkThuong || item.linkThuong === "undefined" || item.linkThuong.trim() === "") {
                 return alert("Chưa gắn Link thường trong file Google Sheet!");
             }
@@ -389,12 +382,10 @@
             } catch(e) { alert("Lỗi mạng!"); }
         }
 
-        // === ĐÃ SỬA: LUÔN LUÔN ĐẾM NGƯỢC, KHÔNG BỊ DỪNG LẠI NỮA ===
         function startAdFlow(finalDestUrl) {
             let lastWatchTime = localStorage.getItem("lastWatchTime");
             let now = new Date().getTime();
             
-            // Đã xem quảng cáo trong vòng 30 phút -> Cho chuyển thẳng tới link đích luôn
             if (lastWatchTime && (now - lastWatchTime < 30 * 60 * 1000)) {
                 window.open(finalDestUrl, '_blank');
                 return;
@@ -402,11 +393,9 @@
 
             targetDestinationUrl = finalDestUrl;
             
-            // Mở link quảng cáo ở tab mới
             let adUrl = "https://vnvip.eastasia.cloudapp.azure.com/j3wgo";
             window.open(adUrl, "_blank"); 
 
-            // Cài đặt Overlay đếm ngược
             let overlay = document.getElementById("ad-overlay");
             let timerEl = document.getElementById("countdown-timer");
             let warningEl = document.getElementById("ad-warning");
@@ -417,33 +406,38 @@
             overlay.style.display = "block";
             timerEl.style.display = "block";
             textSec.style.display = "block";
-            warningEl.style.display = "inline-block";
+            warningEl.style.display = "none";
             btnNext.style.display = "none";
             adTitle.innerText = "Vui lòng đợi giây lát...";
             
-            let timeLeft = 15;
+            let timeLeft = 10;
             timerEl.innerText = timeLeft;
 
             let timerInterval = setInterval(() => {
-                // Đã xóa điều kiện kiểm tra tab ẩn. Timer giờ sẽ tự giảm không bao giờ dừng.
-                timeLeft--;
-                timerEl.innerText = timeLeft;
+                if (document.hidden) {
+                    warningEl.style.display = "none";
+                    timeLeft--;
+                    timerEl.innerText = timeLeft;
 
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    localStorage.setItem("lastWatchTime", new Date().getTime()); // Lưu mốc 30 phút
-                    
-                    timerEl.style.display = "none";
-                    textSec.style.display = "none";
-                    adTitle.innerText = "Hoàn tất! Bấm nút bên dưới để chuyển tiếp";
-                    warningEl.style.display = "none"; // Ẩn cảnh báo
-                    
-                    btnNext.style.display = "inline-block"; 
-                    
-                    btnNext.onclick = function() {
-                        overlay.style.display = "none";
-                        window.open(targetDestinationUrl, '_blank'); 
-                    };
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        localStorage.setItem("lastWatchTime", new Date().getTime());
+                        
+                        timerEl.style.display = "none";
+                        textSec.style.display = "none";
+                        adTitle.innerText = "Hoàn tất! Bấm nút bên dưới để chuyển tiếp";
+                        warningEl.style.display = "none"; 
+                        
+                        btnNext.style.display = "inline-block"; 
+                        
+                        btnNext.onclick = function() {
+                            overlay.style.display = "none";
+                            window.open(targetDestinationUrl, '_blank'); 
+                        };
+                    }
+                } else {
+                    // Nếu quay lại web chính thì dừng đếm và hiện nhắc nhở
+                    warningEl.style.display = "inline-block"; 
                 }
             }, 1000);
         }
