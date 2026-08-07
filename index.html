@@ -296,42 +296,54 @@
             renderList(filtered);
         }
 
+        // TẠO VIDEO/ẢNH BÌA ĐẸP CHUẨN
         function createMediaPreviewHTML(videoUrl, imageUrl, title, category) {
             let vUrl = (videoUrl || "").trim();
             let iUrl = (imageUrl || "").trim();
             let cat = (category || "").trim().toLowerCase();
 
+            // 1. Ưu tiên Ảnh bìa nếu có
+            if (iUrl !== "") {
+                let fitStyle = (cat === 'acc vip') ? 'object-fit: contain; background: #111;' : 'object-fit: cover; object-position: top center;';
+                return `<img class="card-media-item" style="${fitStyle}" src="${iUrl}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x400?text=NO+IMAGE'">`;
+            }
+
+            // 2. Tiktok: Cố tình Zoom to 1.35x (135%) để làm mờ và cắt gọn luôn phần viền đen xấu xí
             let ttMatch = vUrl.match(/video\/(\d+)/);
             if (ttMatch && ttMatch[1]) {
-                return `<iframe class="card-media-item" src="https://www.tiktok.com/embed/v2/${ttMatch[1]}" frameborder="0" scrolling="no" allowfullscreen style="width: 100%; height: 100%; pointer-events: none; overflow: hidden;"></iframe>`;
+                return `<iframe class="card-media-item" src="https://www.tiktok.com/embed/v2/${ttMatch[1]}" frameborder="0" scrolling="no" allowfullscreen style="width: 100%; height: 100%; pointer-events: none; overflow: hidden; transform: scale(1.35);"></iframe>`;
             }
 
+            // 3. YouTube (Cũng Zoom to xíu cho căng đẹp)
             let ytMatch = vUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/);
             if (ytMatch && ytMatch[1]) {
-                return `<iframe class="card-media-item" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="pointer-events: none;"></iframe>`;
+                return `<iframe class="card-media-item" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="pointer-events: none; transform: scale(1.2);"></iframe>`;
             }
 
+            // 4. Video MP4
             if (vUrl.match(/\.(mp4|webm|ogg)$/i)) {
                 return `<video class="card-media-item" src="${vUrl}" preload="metadata" style="object-fit: cover; pointer-events: none;"></video>`;
             }
 
-            let finalImg = iUrl || (vUrl.match(/\.(jpeg|jpg|gif|png|webp)/i) ? vUrl : '');
-            if (!finalImg) finalImg = 'https://via.placeholder.com/300x400?text=NO+IMAGE';
-
-            let fitStyle = (cat === 'acc vip') ? 'object-fit: contain; background: #000;' : 'object-fit: cover; object-position: top center;';
-
-            return `<img class="card-media-item" style="${fitStyle}" src="${finalImg}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x400?text=NO+IMAGE'">`;
+            // Mặc định
+            let fitStyle = (cat === 'acc vip') ? 'object-fit: contain; background: #111;' : 'object-fit: cover; object-position: top center;';
+            return `<img class="card-media-item" style="${fitStyle}" src="https://via.placeholder.com/300x400?text=NO+IMAGE" alt="${title}">`;
         }
 
         function renderList(data) {
             let html = '';
             data.forEach((item, index) => {
                 let mediaHtml = createMediaPreviewHTML(item.video, item.image, item.title, item.category);
+                let isAccVip = item.category.trim().toLowerCase() === 'acc vip';
+                
+                // Gắn thêm Icon Play (▶) vào giữa màn hình cho các phim để làm video trông xịn xò hơn!
+                let playIcon = !isAccVip ? `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(255,255,255,0.7); font-size: 50px; pointer-events: none; text-shadow: 0 4px 10px rgba(0,0,0,0.6);">▶</div>` : '';
                 
                 html += `
                 <div class="card">
-                    <div class="card-media-box">
+                    <div class="card-media-box" style="position: relative;">
                         ${mediaHtml}
+                        ${playIcon}
                     </div>
                     <div class="card-content">
                         <h3>${item.title}</h3>
@@ -349,21 +361,28 @@
             let item = currentFiltered[index];
             if (!item) return;
 
+            // XỬ LÝ ACC VIP: Nếu có nhập Link (Zalo, Web...) ở Google Sheets thì bấm phát vào thẳng link mua luôn!
             if (item.category.trim().toLowerCase() === 'acc vip') {
+                if (item.linkThuong && item.linkThuong.trim() !== "") {
+                    window.open(item.linkThuong, '_blank');
+                    return;
+                }
                 return buyVIP(item.title);
             }
 
+            let linkToPlay = item.linkThuong || item.video;
+
             if (isVip && currentUser) {
-                let targetVip = (item.linkVip && item.linkVip !== "undefined" && item.linkVip.trim() !== "") ? item.linkVip : item.linkThuong;
-                if (!targetVip) return alert("Chưa gắn Link VIP trong file Google Sheet!");
+                let targetVip = (item.linkVip && item.linkVip !== "undefined" && item.linkVip.trim() !== "") ? item.linkVip : linkToPlay;
+                if (!targetVip) return alert("Chưa gắn Link VIP hoặc Link phim trong file Google Sheet!");
                 window.open(targetVip, '_blank');
                 return;
             }
 
-            if (!item.linkThuong || item.linkThuong === "undefined" || item.linkThuong.trim() === "") {
-                return alert("Chưa gắn Link thường trong file Google Sheet!");
+            if (!linkToPlay || linkToPlay === "undefined" || linkToPlay.trim() === "") {
+                return alert("Chưa gắn Link phim (Cột Video hoặc Cột Link Thường) trong file Google Sheet!");
             }
-            startAdFlow(item.linkThuong);
+            startAdFlow(linkToPlay);
         }
 
         async function buyVIP(title) {
@@ -408,20 +427,20 @@
             textSec.style.display = "block";
             warningEl.style.display = "none";
             btnNext.style.display = "none";
-            adTitle.innerText = "Vui lòng đợi giây lát...";
+            adTitle.innerText = "Hệ thống đang chạy thời gian...";
             
             let timeLeft = 10;
             timerEl.innerText = timeLeft;
 
             let timerInterval = setInterval(() => {
-                if (document.hidden) {
+                if (document.hidden || !document.hasFocus()) {
                     warningEl.style.display = "none";
                     timeLeft--;
                     timerEl.innerText = timeLeft;
 
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
-                        localStorage.setItem("lastWatchTime", new Date().getTime());
+                        localStorage.setItem("lastWatchTime", new Date().getTime()); 
                         
                         timerEl.style.display = "none";
                         textSec.style.display = "none";
@@ -436,7 +455,6 @@
                         };
                     }
                 } else {
-                    // Nếu quay lại web chính thì dừng đếm và hiện nhắc nhở
                     warningEl.style.display = "inline-block"; 
                 }
             }, 1000);
