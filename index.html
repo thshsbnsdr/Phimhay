@@ -412,18 +412,19 @@
 
             targetDestinationUrl = finalDestUrl;
             
-            // --- HỆ THỐNG LUÂN PHIÊN QUẢNG CÁO TỰ ĐỘNG ---
+            // --- HỆ THỐNG LUÂN PHIÊN QUẢNG CÁO TỰ ĐỘNG (3 LINK TIKTOK) ---
             let currentAdStep = localStorage.getItem('adStep') || '1';
             let adUrl = "";
             
             if (currentAdStep === '1') {
-                // Ưu tiên link Tiktok bạn yêu cầu trước
                 adUrl = "https://vt.tiktok.com/ZS9h36wYouDLb-ojzE1/";
-                localStorage.setItem('adStep', '2'); // Đánh dấu lần sau mở link kia
+                localStorage.setItem('adStep', '2'); 
+            } else if (currentAdStep === '2') {
+                adUrl = "https://vt.tiktok.com/ZS9hwC35QqF5E-27I2e/";
+                localStorage.setItem('adStep', '3'); 
             } else {
-                // Lần sau mở link cũ
-                adUrl = "https://vnvip.eastasia.cloudapp.azure.com/j3wgo";
-                localStorage.setItem('adStep', '1'); // Đánh dấu lần tới quay lại link 1
+                adUrl = "https://vt.tiktok.com/ZS9hwx4jjAFVH-tnED8/";
+                localStorage.setItem('adStep', '1'); 
             }
 
             window.open(adUrl, "_blank"); 
