@@ -412,21 +412,33 @@
 
             targetDestinationUrl = finalDestUrl;
             
-            // --- HỆ THỐNG LUÂN PHIÊN QUẢNG CÁO TỰ ĐỘNG (3 LINK TIKTOK) ---
-            let currentAdStep = localStorage.getItem('adStep') || '1';
-            let adUrl = "";
+            // --- HỆ THỐNG LUÂN PHIÊN QUẢNG CÁO (KHÔNG GIỚI HẠN SỐ LƯỢNG LINK) ---
+            const adLinks = [
+                "https://vt.tiktok.com/ZS9h36wYouDLb-ojzE1/", // Link 1
+                "https://vt.tiktok.com/ZS9hwC35QqF5E-27I2e/", // Link 2
+                "https://vt.tiktok.com/ZS9hwx4jjAFVH-tnED8/", // Link 3
+                "https://vnvip.eastasia.cloudapp.azure.com/j3wgo"  // Link 4
+            ];
+
+            // Lấy vị trí link hiện tại (mặc định là 0 nếu chưa có)
+            let currentAdIndex = parseInt(localStorage.getItem('adStepIndex')) || 0;
             
-            if (currentAdStep === '1') {
-                adUrl = "https://vt.tiktok.com/ZS9h36wYouDLb-ojzE1/";
-                localStorage.setItem('adStep', '2'); 
-            } else if (currentAdStep === '2') {
-                adUrl = "https://vt.tiktok.com/ZS9hwC35QqF5E-27I2e/";
-                localStorage.setItem('adStep', '3'); 
-            } else {
-                adUrl = "https://vt.tiktok.com/ZS9hwx4jjAFVH-tnED8/";
-                localStorage.setItem('adStep', '1'); 
+            // Nếu bạn lỡ tay xóa bớt link mà hệ thống đang nhớ tới số lớn hơn, thì nó sẽ quay về 0
+            if (currentAdIndex >= adLinks.length) {
+                currentAdIndex = 0;
             }
 
+            // Gán link quảng cáo sẽ mở
+            let adUrl = adLinks[currentAdIndex];
+
+            // Cập nhật vị trí cho lần sau
+            let nextAdIndex = currentAdIndex + 1;
+            if (nextAdIndex >= adLinks.length) {
+                nextAdIndex = 0; // Đã hết danh sách thì quay lại link đầu tiên
+            }
+            localStorage.setItem('adStepIndex', nextAdIndex);
+
+            // Mở link quảng cáo
             window.open(adUrl, "_blank"); 
 
             let overlay = document.getElementById("ad-overlay");
