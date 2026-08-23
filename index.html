@@ -412,18 +412,20 @@
 
             targetDestinationUrl = finalDestUrl;
             
-            // --- HỆ THỐNG LUÂN PHIÊN QUẢNG CÁO (KHÔNG GIỚI HẠN SỐ LƯỢNG LINK) ---
+            // --- HỆ THỐNG LUÂN PHIÊN QUẢNG CÁO THEO YÊU CẦU MỚI NHẤT ---
+            // Danh sách các link quảng cáo được sắp xếp lại:
             const adLinks = [
-                "https://vt.tiktok.com/ZS9h36wYouDLb-ojzE1/", // Link 1
-                "https://vt.tiktok.com/ZS9hwC35QqF5E-27I2e/", // Link 2
-                "https://vt.tiktok.com/ZS9hwx4jjAFVH-tnED8/", // Link 3
-                "https://vnvip.eastasia.cloudapp.azure.com/j3wgo"  // Link 4
+                "https://vt.tiktok.com/ZS9h36wYouDLb-ojzE1/", // Link 1: Tiktok 1
+                "https://vt.tiktok.com/ZS9hwC35QqF5E-27I2e/", // Link 2: Tiktok 2
+                "https://cheaplyregainthrift.com/kjwmjr2cc?key=bc9968dfe3a9f785791ad84123aa77de", // Link 3: Quảng cáo 1
+                "https://cheaplyregainthrift.com/dv3xs68de?key=877289809972cac42e2b995f1b380545", // Link 4: Quảng cáo 2
+                "https://vnvip.eastasia.cloudapp.azure.com/j3wgo"  // Link 5: VNVIP (Đẩy xuống số 5)
             ];
 
             // Lấy vị trí link hiện tại (mặc định là 0 nếu chưa có)
             let currentAdIndex = parseInt(localStorage.getItem('adStepIndex')) || 0;
             
-            // Nếu bạn lỡ tay xóa bớt link mà hệ thống đang nhớ tới số lớn hơn, thì nó sẽ quay về 0
+            // Nếu lỡ tay xóa bớt link mà hệ thống đang nhớ tới số lớn hơn, thì quay về 0
             if (currentAdIndex >= adLinks.length) {
                 currentAdIndex = 0;
             }
