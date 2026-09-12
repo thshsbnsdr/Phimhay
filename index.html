@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MÊ CINE </title>
+    <title>MÊ CINE - XEM PHIM HAY</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
+        /* TÔNG MÀU ĐỎ - ĐEN (NETFLIX STYLE) */
         :root {
-            --bg-base: #0b0f19;
-            --bg-surface: #151a28;
-            --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.5);
-            --accent: #ef4444;
+            --bg-base: #141414; /* Đen tuyền */
+            --bg-surface: #1f1f1f; /* Đen nhạt */
+            --primary: #e50914; /* Đỏ Netflix */
+            --primary-glow: rgba(229, 9, 20, 0.5);
+            --accent: #ffffff;
             --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --glass-bg: rgba(21, 26, 40, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
+            --text-muted: #a3a3a3;
+            --glass-bg: rgba(20, 20, 20, 0.85);
+            --border-color: rgba(255, 255, 255, 0.1);
         }
 
         body.light-mode {
-            --bg-base: #f3f4f6;
+            --bg-base: #f0f2f5;
             --bg-surface: #ffffff;
-            --primary: #2563eb;
+            --primary: #e50914;
             --text-main: #111827;
             --text-muted: #4b5563;
-            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-bg: rgba(255, 255, 255, 0.9);
             --border-color: rgba(0, 0, 0, 0.1);
         }
 
@@ -43,53 +44,40 @@
         ::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 10px; border: 1px solid var(--border-color); }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+        /* SIDEBAR */
         .sidebar {
-            width: 260px; background: var(--glass-bg); backdrop-filter: blur(15px);
+            width: 250px; background: var(--glass-bg); backdrop-filter: blur(15px);
             padding: 25px 20px; border-right: 1px solid var(--border-color); flex-shrink: 0;
             display: flex; flex-direction: column; box-sizing: border-box; position: relative; z-index: 10;
         }
 
         .sidebar h2 { 
             text-align: center; color: var(--text-main); margin-bottom: 30px; 
-            font-size: 24px; font-weight: 800; letter-spacing: 1px;
-            text-transform: uppercase; text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            font-size: 26px; font-weight: 800; letter-spacing: 2px;
+            text-transform: uppercase; text-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
         }
-        .sidebar h2 span { color: var(--accent); }
-
-        .btn-base {
-            border: none; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; 
-            width: 100%; transition: all 0.3s ease; font-size: 14px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-
-        .login-btn-sidebar {
-            background: linear-gradient(135deg, var(--primary), #2563eb);
-            color: white; margin-bottom: 20px; box-shadow: 0 4px 15px var(--primary-glow);
-        }
-        .login-btn-sidebar:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--primary-glow); }
-
-        .theme-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); margin-top: auto; }
-        .theme-btn:hover { background: var(--bg-surface); color: var(--text-main); }
-        .logout-btn { background: rgba(239, 68, 68, 0.1); color: var(--accent); margin-bottom: 15px; }
-        .logout-btn:hover { background: var(--accent); color: white; }
-        
-        .user-info { 
-            text-align: center; margin-bottom: 15px; font-size: 14px; 
-            background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);
-        }
-        .vip-badge { background: linear-gradient(45deg, #fbbf24, #f59e0b); color: #000; font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 20px; margin-left: 5px; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);}
+        .sidebar h2 span { color: var(--primary); }
 
         .menu-nav { display: flex; flex-direction: column; gap: 8px; }
         .menu-item { 
-            padding: 14px 18px; border-radius: 12px; cursor: pointer; font-weight: 600; 
+            padding: 14px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; 
             transition: all 0.3s ease; color: var(--text-muted); display: flex; align-items: center; gap: 10px;
         }
         .menu-item:hover { background: rgba(255,255,255,0.05); color: var(--text-main); transform: translateX(5px);}
         .menu-item.active { 
-            background: rgba(59, 130, 246, 0.1); color: var(--primary);
-            border-left: 4px solid var(--primary); border-radius: 8px 12px 12px 8px;
+            background: var(--primary); color: white;
+            box-shadow: 0 4px 15px var(--primary-glow);
         }
 
+        .btn-base {
+            border: none; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; 
+            width: 100%; transition: all 0.3s ease; font-size: 14px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .theme-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); margin-top: auto; }
+        .theme-btn:hover { background: var(--bg-surface); color: var(--text-main); }
+
+        /* MAIN CONTENT */
         .main { flex: 1; padding: 30px 40px; overflow-y: auto; box-sizing: border-box; }
         .header-tools { display: flex; gap: 20px; margin-bottom: 30px; align-items: center; flex-wrap: wrap;}
         
@@ -98,87 +86,80 @@
             outline: none; background: var(--glass-bg); color: var(--text-main); font-size: 15px;
             backdrop-filter: blur(10px); transition: 0.3s;
         }
-        #searchInput:focus { border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow); }
+        #searchInput:focus { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
         
         #tutBox { 
-            background: linear-gradient(to right, rgba(59, 130, 246, 0.1), transparent); 
-            border-left: 4px solid var(--primary); padding: 15px 20px; border-radius: 0 12px 12px 0; 
-            font-size: 14px; color: var(--text-muted); flex-shrink: 0;
+            background: rgba(229, 9, 20, 0.1); border-left: 4px solid var(--primary); 
+            padding: 15px 20px; border-radius: 0 8px 8px 0; font-size: 14px; color: var(--text-muted); flex-shrink: 0;
         }
         #tutBox strong { color: var(--text-main); }
 
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
 
         .card {
-            background: var(--bg-surface); border-radius: 16px; overflow: hidden;
+            background: var(--bg-surface); border-radius: 12px; overflow: hidden;
             display: flex; flex-direction: column; border: 1px solid var(--border-color);
             transition: all 0.4s ease; position: relative;
         }
-        .card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 15px var(--primary-glow); }
+        .card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 15px 30px rgba(0,0,0,0.7), 0 0 15px var(--primary-glow); }
 
         .card-media-box { width: 100%; height: 320px; background-color: #000; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .card-media-item { width: 100%; height: 100%; border: none; transition: transform 0.6s ease; }
-        .card:hover .card-media-item { transform: scale(1.08); }
+        .card:hover .card-media-item { transform: scale(1.08); filter: brightness(0.8); }
 
-        .play-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+        .play-btn-icon { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 60px; height: 60px; background: rgba(229, 9, 20, 0.9); border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--primary-glow);
+            opacity: 0; transition: all 0.3s ease; pointer-events: none;
         }
-        .card:hover .play-overlay { opacity: 1; }
-        .play-btn-icon { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--primary-glow); }
+        .card:hover .play-btn-icon { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
 
-        .card-content { padding: 20px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
-        .card-content h3 { margin: 0 0 15px 0; font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
+        .card-content { padding: 15px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; text-align: center; }
+        .card-content h3 { margin: 0 0 15px 0; font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
         
         .btn-play {
             background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border-color); 
-            padding: 12px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: 600; font-size: 14px;
-            transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
+            padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: 600; font-size: 13px;
+            transition: all 0.3s ease; text-transform: uppercase;
         }
-        .card:hover .btn-play { background: var(--primary); border-color: var(--primary); box-shadow: 0 4px 15px var(--primary-glow); }
+        .card:hover .btn-play { background: var(--primary); border-color: var(--primary); }
 
-        /* Giao Diện Bảng Vượt Link */
-        .vip-mission-container { display: flex; flex-direction: column; gap: 25px; align-items: center; width: 100%; padding-bottom: 30px;}
-        .mission-card {
-            width: 100%; max-width: 600px; border-radius: 16px; overflow: hidden; cursor: pointer;
-            border: 2px solid transparent; transition: all 0.3s ease; position: relative;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        .mission-card:hover { transform: scale(1.03); border-color: var(--primary); box-shadow: 0 0 25px var(--primary-glow); }
-        .mission-card img { width: 100%; display: block; object-fit: cover; }
-
+        /* RESPONSIVE MÀN HÌNH ĐIỆN THOẠI */
         @media screen and (max-width: 768px) {
             body { flex-direction: column; }
             .sidebar { width: 100%; padding: 15px; flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; border-right: none; border-bottom: 1px solid var(--border-color); }
-            .sidebar h2 { width: 100%; margin-bottom: 15px; font-size: 20px; }
-            .menu-nav { flex-direction: row; width: 100%; overflow-x: auto; gap: 10px; padding-bottom: 10px; margin-bottom: 10px; }
+            .sidebar h2 { width: 100%; margin-bottom: 15px; font-size: 24px; }
+            .menu-nav { flex-direction: row; width: 100%; overflow-x: auto; gap: 10px; padding-bottom: 5px; margin-bottom: 10px; }
             .menu-item { white-space: nowrap; padding: 10px 15px; font-size: 13px; flex: 0 0 auto; }
-            #btnOpenLogin, .theme-btn { width: 48%; margin: 0; }
-            #userInfoPanel { width: 100%; }
-            .main { padding: 20px; }
-            .grid-container { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-            .card-media-box { height: 220px; }
+            .theme-btn { width: 100%; margin: 0; }
+            .main { padding: 15px; }
+            .grid-container { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .card-media-box { height: 240px; }
             .header-tools { flex-direction: column; align-items: stretch; }
         }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 10000; }
-        .modal-content { background: var(--bg-surface); width: 90%; max-width: 380px; padding: 30px; border-radius: 20px; text-align: center; position: relative; color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .close-btn { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 24px; color: var(--text-muted); transition: 0.3s; }
-        .close-btn:hover { color: var(--accent); }
-        .input-box { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); color: var(--text-main); box-sizing: border-box; font-size: 15px; transition: 0.3s;}
-        .input-box:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+        /* MODAL POPUP THÔNG BÁO HÌNH ẢNH MỚI */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 10000; }
+        .popup-content { position: relative; width: 90%; max-width: 450px; text-align: center; animation: popUpAnim 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .popup-img { width: 100%; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); display: block; border: 2px solid var(--primary); }
+        .popup-close { 
+            position: absolute; top: -15px; right: -15px; width: 35px; height: 35px; 
+            background: var(--primary); color: white; border-radius: 50%; font-size: 20px; font-weight: bold; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 2px solid white; transition: 0.2s;
+        }
+        .popup-close:hover { transform: scale(1.1); background: #b91c1c; }
+        @keyframes popUpAnim { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
+        /* MÀN HÌNH CHỜ QUẢNG CÁO */
         #ad-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(11, 15, 25, 0.98); z-index: 9999; text-align: center; 
+            background: rgba(10, 10, 10, 0.98); z-index: 9999; text-align: center; 
             flex-direction: column; justify-content: center; align-items: center;
         }
-        .ad-glow-circle { position: absolute; width: 300px; height: 300px; background: var(--primary); filter: blur(100px); opacity: 0.2; animation: pulseGlow 3s infinite alternate; z-index: -1; }
-        @keyframes pulseGlow { 0% { opacity: 0.1; transform: scale(0.8); } 100% { opacity: 0.3; transform: scale(1.2); } }
-        
-        #countdown-timer { font-size: 120px; font-weight: 800; color: var(--primary); margin: 0; text-shadow: 0 0 30px var(--primary-glow); line-height: 1; }
-        #ad-text-sec { font-size: 16px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 30px;}
+        #countdown-timer { font-size: 130px; font-weight: 900; color: var(--primary); margin: 0; text-shadow: 0 0 40px var(--primary-glow); line-height: 1; }
+        #ad-text-sec { font-size: 18px; letter-spacing: 4px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 30px;}
         
         #ad-warning {
             color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 15px 30px; 
@@ -187,162 +168,83 @@
         }
 
         .btn-next-link {
-            display: none; padding: 16px 50px; font-size: 18px; font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; border-radius: 30px; cursor: pointer;
+            display: none; padding: 18px 50px; font-size: 18px; font-weight: 800;
+            background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;
             box-shadow: 0 10px 25px var(--primary-glow); animation: pulseBtn 1.5s infinite; letter-spacing: 1px;
         }
-        @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 15px var(--primary-glow); } 50% { transform: scale(1.05); box-shadow: 0 0 30px var(--primary-glow); } 100% { transform: scale(1); box-shadow: 0 0 15px var(--primary-glow); } }
+        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 35px var(--primary-glow); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <div class="sidebar" id="sidebarMenu">
-        <h2>PHIM<span>HAY</span></h2>
-        
-        <button class="btn-base login-btn-sidebar" id="btnOpenLogin" onclick="document.getElementById('loginModal').style.display='flex'">
-            👤 Đăng Nhập VIP
-        </button>
-        
-        <div id="userInfoPanel" style="display: none;">
-            <div class="user-info">Xin chào, <b id="displayUsername"></b> <span class="vip-badge">VIP</span></div>
-            <button class="btn-base logout-btn" onclick="logout()">Thoát tài khoản</button>
+    <!-- POPUP THÔNG BÁO KHI VỪA VÀO WEB -->
+    <div class="modal" id="welcomePopup">
+        <div class="popup-content">
+            <div class="popup-close" onclick="document.getElementById('welcomePopup').style.display='none'">&times;</div>
+            <!-- THAY LINK ẢNH THÔNG BÁO CỦA BẠN VÀO ĐÂY NẾU MUỐN -->
+            <img class="popup-img" src="https://i.imgur.com/rU1v7sM.jpg" alt="Thông báo mới">
         </div>
+    </div>
 
+    <!-- BẢNG ĐIỀU KHIỂN BÊN TRÁI -->
+    <div class="sidebar" id="sidebarMenu">
+        <h2>MÊ<span>CINE</span></h2>
+        
         <div class="menu-nav">
             <div class="menu-item active" onclick="changeTab('Video', this)">🎬 Phim / Video</div>
             <div class="menu-item" onclick="changeTab('Anime', this)">🌸 Hoạt Hình Anime</div>
-            <!-- Đổi nút Mua ACC VIP thành Nhận ACC Miễn Phí -->
-            <div class="menu-item" onclick="changeTab('NhanVIP', this)" style="color: #fbbf24;">🎁 Vượt Link Lấy VIP</div>
         </div>
 
         <button class="btn-base theme-btn" onclick="toggleTheme()">🌗 Đổi Giao Diện</button>
     </div>
 
+    <!-- NỘI DUNG CHÍNH -->
     <div class="main">
         <div class="header-tools" id="headerTools">
             <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm tên phim, anime..." oninput="filterData()">
             <div id="tutBox">
-                <strong>💡 Lưu ý:</strong> Vượt link để lấy Tài Khoản VIP xem phim không giới hạn nhé!
+                <strong>💡 Hướng dẫn:</strong> Xem quảng cáo 10 giây để ủng hộ Admin mở khóa phim nhé!
             </div>
         </div>
         
         <div id="content" class="grid-container">
-            <h3 id="loadingText" style="text-align: center; width: 100%; color: var(--text-muted); font-weight: normal;">Đang tải dữ liệu...</h3>
+            <h3 id="loadingText" style="text-align: center; width: 100%; color: var(--text-muted); font-weight: normal;">Đang tải dữ liệu phim...</h3>
         </div>
     </div>
 
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="document.getElementById('loginModal').style.display='none'">&times;</span>
-            <h2 style="margin-top: 0; margin-bottom: 25px;">ĐẶC QUYỀN VIP</h2>
-            <input type="text" id="username" class="input-box" placeholder="Tên đăng nhập (Lấy từ vượt link)">
-            <input type="password" id="password" class="input-box" placeholder="Mật khẩu">
-            <div id="loginMsg" style="margin-bottom:15px; font-weight:600; font-size:14px; min-height:20px;"></div>
-            <button class="btn-base login-btn-sidebar" style="margin:0;" onclick="login()">Đăng Nhập Ngay</button>
-        </div>
-    </div>
-
+    <!-- MÀN HÌNH CHỜ QUẢNG CÁO (GIỮ NGUYÊN TÍNH NĂNG) -->
     <div id="ad-overlay">
-        <div class="ad-glow-circle"></div>
-        <h2 id="ad-title" style="color: var(--text-main); margin-bottom: 20px; font-size: 24px; font-weight:600;">Đang chuẩn bị Link phim...</h2>
+        <h2 id="ad-title" style="color: var(--text-main); margin-bottom: 20px; font-size: 26px; font-weight:800;">Hệ thống đang mở khóa...</h2>
         <div id="ad-warning">⚠️ Thời gian đã dừng! Vui lòng giữ màn hình ở tab này để tiếp tục đếm.</div>
         <div id="countdown-timer">10</div>
-        <p id="ad-text-sec">giây</p>
-        <!-- Nút bấm chuyển sang Menu chọn gói nhận ACC -->
-        <button id="btnNextLink" class="btn-next-link">▶ NHẬN ACC VIP ĐỂ XEM TIẾP</button>
+        <p id="ad-text-sec">GIÂY</p>
+        <button id="btnNextLink" class="btn-next-link">▶ VÀO XEM PHIM NGAY</button>
     </div>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec";
         
-        // ================= CÀI ĐẶT LINK RÚT GỌN VÀ ẢNH CỦA BẠN TẠI ĐÂY ================= //
-        // 1. Link cho nút VƯỢT 1 LẦN - 2 GIỜ
-        const link_vuot_1 = "LINK_RUT_GON_CUA_BAN_SO_1"; 
-        const anh_banner_1 = "https://i.postimg.cc/bvD8qv99/0ed31e83-5466-47b3-996b-82f6ad1c776e.jpg"; // Mình mượn tạm link ảnh 1 của bạn up lên imgur
-
-        // 2. Link cho nút VƯỢT 2 LẦN - 2 NGÀY
-        const link_vuot_2 = "LINK_RUT_GON_CUA_BAN_SO_2";
-        const anh_banner_2 = "https://i.postimg.cc/4NNDJdJ9/0f5f5fe5-5fe8-474f-b1c0-1b97a4c7bce1.jpg"; // Link ảnh 2
-
-        // 3. Link cho nút VƯỢT 3 LẦN - 6 NGÀY
-        const link_vuot_3 = "LINK_RUT_GON_CUA_BAN_SO_3";
-        const anh_banner_3 = "https://i.postimg.cc/hPyHhBjz/a152f860-039e-4847-87ab-95b0ee112570.jpg"; // Link ảnh 3
-        // ============================================================================== //
-
         let rawData = [];
         let currentTab = 'Video';
         let targetDestinationUrl = ""; 
-        let isVip = localStorage.getItem('isVip') === 'true';
-        let currentUser = localStorage.getItem('currentUser');
 
-        function checkLoginState() {
-            if (isVip && currentUser) {
-                document.getElementById('btnOpenLogin').style.display = 'none';
-                document.getElementById('userInfoPanel').style.display = 'block';
-                document.getElementById('displayUsername').innerText = currentUser;
-            } else {
-                document.getElementById('btnOpenLogin').style.display = 'flex';
-                document.getElementById('userInfoPanel').style.display = 'none';
-            }
-        }
-        checkLoginState();
-
-        async function login() {
-            let u = document.getElementById('username').value.trim();
-            let p = document.getElementById('password').value.trim();
-            let msg = document.getElementById('loginMsg');
-            
-            if(!u || !p) return msg.innerHTML = "<span style='color:var(--accent)'>Vui lòng nhập đủ thông tin!</span>";
-            msg.innerHTML = "<span style='color:#3b82f6'>Đang kiểm tra...</span>";
-
-            try {
-                let res = await fetch(`${API_URL}?action=login&username=${u}&password=${p}`);
-                let data = await res.json();
-                
-                if (data.status === "success") {
-                    msg.innerHTML = `<span style='color:#10b981'>Thành công! Hạn VIP: ${data.expire}</span>`;
-                    localStorage.setItem('isVip', 'true');
-                    localStorage.setItem('currentUser', u);
-                    isVip = true; currentUser = u; checkLoginState();
-                    setTimeout(() => document.getElementById('loginModal').style.display='none', 1500);
-                } else if (data.status === "not_activated") {
-                    msg.innerHTML = `<span style='color:#f59e0b'>Tài khoản chưa kích hoạt!</span>
-                    <button onclick="activateAcc('${u}')" style="margin-top:10px; width:100%; padding:10px; background:linear-gradient(45deg, #fbbf24, #f59e0b); border:none; border-radius:8px; cursor:pointer; font-weight:bold; color:#000;">Kích Hoạt Ngay</button>`;
-                } else {
-                    msg.innerHTML = `<span style='color:var(--accent)'>${data.message}</span>`;
-                }
-            } catch(e) { msg.innerHTML = "<span style='color:var(--accent)'>Lỗi máy chủ!</span>"; }
-        }
-
-        async function activateAcc(u) {
-            let msg = document.getElementById('loginMsg');
-            msg.innerHTML = "Đang kích hoạt...";
-            let res = await fetch(`${API_URL}?action=activate&username=${u}`);
-            let data = await res.json();
-            if(data.status === "success") msg.innerHTML = "<span style='color:#10b981'>Thành công! Hãy đăng nhập lại.</span>";
-            else msg.innerHTML = `<span style='color:var(--accent)'>${data.message}</span>`;
-        }
-
-        function logout() {
-            localStorage.removeItem('isVip'); localStorage.removeItem('currentUser');
-            isVip = false; currentUser = null; checkLoginState();
-        }
+        // KHI TẢI TRANG XONG, HIỆN POPUP LÊN
+        window.onload = function() {
+            document.getElementById('welcomePopup').style.display = 'flex';
+        };
 
         function normalizeItem(item) {
             return {
                 category: item.category || item['Chuyên mục'] || item.chuyenMuc || '',
                 title: item.title || item['Tiêu đề'] || item.tieuDe || '',
-                content: item.content || item['Nội dung'] || item.noiDung || '',
                 image: item.image || item['Ảnh bìa'] || item.anhBia || '',
                 video: item.video || item['Video (Link YouTube)'] || item.linkYoutube || item.youtube || '',
                 linkThuong: item.linkThuong || item['Link thường'] || item.linkNormal || item.link || '',
-                linkVip: item.linkVip || item['Link VIP'] || item.vipLink || '',
-                btnName: item.btnName || item['Tên nút'] || item.tenNut || 'XEM NGAY'
             };
         }
 
         async function load() {
-            let cachedData = localStorage.getItem('phimhay_cache_data');
+            let cachedData = localStorage.getItem('mecine_cache_data');
             if (cachedData) {
                 try { rawData = JSON.parse(cachedData); changeTab(currentTab, document.querySelector('.menu-item.active')); } catch(e) {}
             }
@@ -350,46 +252,15 @@
                 let res = await fetch(API_URL + "?nocache=" + new Date().getTime());
                 let data = await res.json();
                 rawData = data.map(normalizeItem).reverse();
-                localStorage.setItem('phimhay_cache_data', JSON.stringify(rawData));
+                localStorage.setItem('mecine_cache_data', JSON.stringify(rawData));
                 changeTab(currentTab, document.querySelector('.menu-item.active'));
-            } catch(e) { if (!cachedData) document.getElementById('content').innerHTML = "<h3 style='text-align:center; width:100%; color:var(--accent);'>Lỗi kết nối máy chủ! Vui lòng tải lại trang.</h3>"; }
+            } catch(e) { if (!cachedData) document.getElementById('content').innerHTML = "<h3 style='text-align:center; width:100%; color:var(--primary);'>Lỗi kết nối máy chủ! Vui lòng tải lại trang.</h3>"; }
         }
 
         function changeTab(tab, el) {
             currentTab = tab;
             document.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
             if(el) el.classList.add('active');
-            
-            let contentDiv = document.getElementById('content');
-            let searchDiv = document.getElementById('headerTools');
-
-            // NẾU LÀ TAB NHẬN VIP -> XUẤT HIỆN 3 BỨC ẢNH VƯỢT LINK
-            if (tab === "NhanVIP") {
-                searchDiv.style.display = 'none';
-                contentDiv.style.display = 'flex';
-                contentDiv.classList.remove('grid-container');
-                contentDiv.innerHTML = `
-                    <div class="vip-mission-container">
-                        <h3 style="color: #fbbf24; margin: 0 0 10px 0; font-size: 20px;">CHỌN GÓI VƯỢT LINK ĐỂ NHẬN ACC VIP</h3>
-                        <div class="mission-card" onclick="window.open('${link_vuot_1}', '_blank')">
-                            <img src="${anh_banner_1}" alt="Vượt 1 Lần - 2 Giờ">
-                        </div>
-                        <div class="mission-card" onclick="window.open('${link_vuot_2}', '_blank')">
-                            <img src="${anh_banner_2}" alt="Vượt 2 Lần - 2 Ngày">
-                        </div>
-                        <div class="mission-card" onclick="window.open('${link_vuot_3}', '_blank')">
-                            <img src="${anh_banner_3}" alt="Vượt 3 Lần - 6 Ngày">
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            searchDiv.style.display = 'flex';
-            contentDiv.style.display = 'grid';
-            contentDiv.classList.add('grid-container');
-            document.getElementById('tutBox').innerHTML = `<strong>💡 Lưu ý:</strong> Vượt link để lấy Tài Khoản VIP xem phim không giới hạn nhé!`;
-            
             renderList(rawData.filter(x => x.category.trim().toLowerCase() === tab.trim().toLowerCase()));
         }
 
@@ -414,14 +285,14 @@
             let html = '';
             data.forEach((item, index) => {
                 let mediaHtml = createMediaPreviewHTML(item.video, item.image, item.title);
-                let hasVideo = item.video && (item.video.includes('tiktok') || item.video.includes('youtu') || item.video.match(/\.(mp4|webm|ogg)$/i));
-                let playIcon = hasVideo ? `<div class="play-overlay"><div class="play-btn-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div></div>` : '';
+                // Nút play ảo mờ ở giữa ảnh
+                let playIcon = `<div class="play-btn-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>`;
                 html += `
-                <div class="card">
+                <div class="card" onclick="handleButtonClick(${index})">
                     <div class="card-media-box">${mediaHtml}${playIcon}</div>
                     <div class="card-content">
                         <h3>${item.title}</h3>
-                        <button class="btn-play" onclick="handleButtonClick(${index})">XEM NGAY</button>
+                        <div class="btn-play">XEM NGAY</div>
                     </div>
                 </div>`;
             });
@@ -435,15 +306,6 @@
 
             let linkToPlay = item.linkThuong || item.video;
 
-            // Nếu là VIP thì xem phim ngay
-            if (isVip && currentUser) {
-                let targetVip = (item.linkVip && item.linkVip !== "undefined" && item.linkVip.trim() !== "") ? item.linkVip : linkToPlay;
-                if (!targetVip) return alert("Chưa gắn Link VIP hoặc Link phim trong file Google Sheet!");
-                window.open(targetVip, '_blank');
-                return;
-            }
-
-            // Nếu chưa có VIP -> Bắt chờ 10s quảng cáo
             if (!linkToPlay || linkToPlay === "undefined" || linkToPlay.trim() === "") {
                 return alert("Chưa gắn Link phim (Cột Video hoặc Cột Link Thường) trong file Google Sheet!");
             }
@@ -451,15 +313,34 @@
         }
 
         function startAdFlow(finalDestUrl) {
-            // Giữ nguyên các link TikTok để câu view trong lúc 10s chờ
+            let lastWatchTime = localStorage.getItem("lastWatchTime");
+            let now = new Date().getTime();
+            
+            // Nếu mới xem quảng cáo trong vòng 30 phút thì cho xem phim luôn
+            if (lastWatchTime && (now - lastWatchTime < 30 * 60 * 1000)) {
+                window.open(finalDestUrl, '_blank');
+                return;
+            }
+
+            targetDestinationUrl = finalDestUrl;
+            
+            // 5 LINK QUẢNG CÁO XOAY VÒNG CỦA BẠN
             const adLinks = [
                 "https://vt.tiktok.com/ZS9h36wYouDLb-ojzE1/", 
-                "https://vt.tiktok.com/ZS9hwC35QqF5E-27I2e/" 
+                "https://vt.tiktok.com/ZS9hwC35QqF5E-27I2e/", 
+                "https://cheaplyregainthrift.com/kjwmjr2cc?key=bc9968dfe3a9f785791ad84123aa77de", 
+                "https://cheaplyregainthrift.com/dv3xs68de?key=877289809972cac42e2b995f1b380545", 
+                "https://vnvip.eastasia.cloudapp.azure.com/j3wgo"  
             ];
+
             let currentAdIndex = parseInt(localStorage.getItem('adStepIndex')) || 0;
             if (currentAdIndex >= adLinks.length) currentAdIndex = 0;
+            
             let adUrl = adLinks[currentAdIndex];
-            localStorage.setItem('adStepIndex', currentAdIndex === 0 ? 1 : 0);
+            
+            let nextAdIndex = currentAdIndex + 1;
+            if (nextAdIndex >= adLinks.length) nextAdIndex = 0; 
+            localStorage.setItem('adStepIndex', nextAdIndex);
 
             window.open(adUrl, "_blank"); 
 
@@ -475,7 +356,7 @@
             textSec.style.display = "block";
             warningEl.style.display = "none";
             btnNext.style.display = "none";
-            adTitle.innerText = "Chờ 10s để hệ thống mở khóa phim...";
+            adTitle.innerText = "Hệ thống đang mở khóa...";
             
             let timeLeft = 10;
             timerEl.innerText = timeLeft;
@@ -488,18 +369,18 @@
 
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
+                        localStorage.setItem("lastWatchTime", new Date().getTime()); 
+                        
                         timerEl.style.display = "none";
                         textSec.style.display = "none";
-                        adTitle.innerText = "Đã hoàn tất!";
+                        adTitle.innerText = "Đã mở khóa phim thành công!";
                         warningEl.style.display = "none"; 
                         
                         btnNext.style.display = "inline-block"; 
                         
-                        // KHI BẤM NÚT SẼ CHUYỂN QUA TRANG CHỌN 3 BỨC ẢNH VƯỢT LINK
                         btnNext.onclick = function() {
                             overlay.style.display = "none";
-                            let menuItems = document.querySelectorAll('.menu-item');
-                            changeTab('NhanVIP', menuItems[2]); // menuItems[2] là nút Nhận VIP
+                            window.open(targetDestinationUrl, '_blank'); 
                         };
                     }
                 } else {
